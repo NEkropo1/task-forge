@@ -68,7 +68,7 @@ class TaskAssignment(models.Model):
 
 
 class Team(models.Model):
-    name = models.CharField(max_length=110)
+    name = models.CharField(max_length=110, unique=True)
     members = models.ManyToManyField("Worker", blank=False, related_name="teams")
 
     def __str__(self):
@@ -76,7 +76,7 @@ class Team(models.Model):
 
 
 class Position(models.Model):
-    name = models.CharField(max_length=127)
+    name = models.CharField(max_length=127, unique=True)
 
     def __str__(self):
         return self.name
@@ -124,6 +124,13 @@ class Project(models.Model):
     deadline = models.DateField(
         validators=[MinValueValidator(limit_value=datetime.date.today)]
     )
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["name", "manager"], name="unique_project_and_manager",
+            )
+        ]
 
     def __str__(self):
         return self.name

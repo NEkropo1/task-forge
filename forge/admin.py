@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 
-from forge.models import Worker
+from forge.models import Worker, Position, TaskType, Project
 
 
 # Register your models here.
@@ -37,3 +37,24 @@ class WorkerAdmin(UserAdmin):
             ),
         )
     )
+
+
+@admin.register(Project)
+class ProjectAdmin(admin.ModelAdmin):
+    list_display = ('name', 'manager', 'is_completed', 'start_date', 'deadline')
+    list_filter = ('manager', 'is_completed')
+    search_fields = ('name', 'description')
+    date_hierarchy = 'start_date'
+    fieldsets = (
+        (None, {'fields': ('name', 'description', 'manager')}),
+        ('Dates', {'fields': ('start_date', 'deadline', 'is_completed')}),
+    )
+
+@admin.register(Position)
+class PositionAdmin(admin.ModelAdmin):
+    list_display = ("name",)
+
+
+@admin.register(TaskType)
+class TaskTypeAdmin(admin.ModelAdmin):
+    list_display = ("name",)
