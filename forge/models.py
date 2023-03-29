@@ -69,7 +69,7 @@ class TaskAssignment(models.Model):
 
 class Team(models.Model):
     name = models.CharField(max_length=110)
-    members = models.ManyToManyField("Worker", blank=True, related_name="teams")
+    members = models.ManyToManyField("Worker", blank=False, related_name="teams")
 
     def __str__(self):
         return self.name
