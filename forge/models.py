@@ -57,8 +57,16 @@ class Task(models.Model):
 class TaskAssignment(models.Model):
     task = models.ForeignKey(Task, on_delete=models.CASCADE)
     assigned_date = models.DateField(auto_now_add=True)
-    assignee = models.ForeignKey("Worker", on_delete=models.CASCADE, related_name="assignees")
-    project = models.ForeignKey("Project", on_delete=models.CASCADE, related_name="projects")
+    assignee = models.ForeignKey(
+        "Worker",
+        on_delete=models.CASCADE,
+        related_name="assignees"
+    )
+    project = models.ForeignKey(
+        "Project",
+        on_delete=models.CASCADE,
+        related_name="projects"
+    )
 
     def __str__(self):
         return (
@@ -123,7 +131,11 @@ class Worker(AbstractUser):
 class Project(models.Model):
     name = models.CharField(max_length=255)
     description = models.TextField()
-    manager = models.ForeignKey("ProjectManager", on_delete=models.CASCADE, related_name="projects")
+    manager = models.ForeignKey(
+        "ProjectManager",
+        on_delete=models.CASCADE,
+        related_name="projects"
+    )
     is_completed = models.BooleanField(default=False)
     start_date = models.DateField(
         validators=[MinValueValidator(limit_value=datetime.date.today)]
@@ -145,8 +157,16 @@ class Project(models.Model):
 
 class ProjectTaskAssignment(models.Model):
     task = models.ForeignKey(Task, on_delete=models.CASCADE, related_name="tasks")
-    project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name="project")
-    assignee = models.ForeignKey(Worker, on_delete=models.CASCADE, related_name="workers")
+    project = models.ForeignKey(
+        Project,
+        on_delete=models.CASCADE,
+        related_name="project"
+    )
+    assignee = models.ForeignKey(
+        Worker,
+        on_delete=models.CASCADE,
+        related_name="workers"
+    )
 
     def __str__(self):
         return (
