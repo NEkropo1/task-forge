@@ -1,9 +1,15 @@
 {% extends "base.html" %}
 
 {% block content %}
-  <a>Welcome to forge!</a>
+  <h2>Welcome to forge!</h2>
+  <a href="{% url 'forge:index' %}">site visited</a> {{ num_visits }} times
+
     <p>
       I know it's pretty empty here, but we will change it
-      in a while
+      in a while,
     </p>
+    <p>
+    In a meantime: total number of workers on our projects are: {{ num_workers }}
+    </p>
+
 {% endblock %}

@@ -16,3 +16,45 @@ a {
     float: right;
     margin: 0 2px 0 2px;
 }
+
+input[type=text]:focus, textarea:focus {
+  background-color: #2a2d31;
+  color: #067cc4;
+}
+
+input[type=text], textarea {
+  background-color: #34373b;
+  color: #0770b0;
+}
+
+/* Custom CSS for crispy forms */
+
+/* Change the background color of form fields */
+.form-control {
+  background-color: #343a40;
+  color: #626d79;
+}
+
+/* Change the color of labels for form fields */
+.control-label {
+  color: #626d79;
+}
+
+/* Change the color of the form button */
+.btn-primary {
+  background-color: #005b91;
+  border-color: #005b91;
+}
+
+/* Change the hover and focus color of the form button */
+.btn-primary:hover,
+.btn-primary:focus {
+  background-color: #935e01;
+  border-color: #935e01;
+}
+
+.list-group-item-custom {
+  background-color: #333;
+  color: #7c6c6c;
+  border-color: #2d2c2c;
+}

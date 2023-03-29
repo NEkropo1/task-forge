@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "debug_toolbar",
     "crispy_forms",
+    "crispy_bootstrap4",
     "forge",
 ]
 
@@ -112,6 +113,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 AUTH_USER_MODEL = "forge.Worker"
 
+LOGOUT_REDIRECT_URL = "forge:welcome"
 LOGIN_REDIRECT_URL = "forge:index"
 LOGIN_URL = "forge:welcome"
 

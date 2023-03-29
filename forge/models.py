@@ -122,7 +122,8 @@ class Worker(AbstractUser):
         verbose_name_plural = "workers"
 
     def get_absolute_url(self):
-        return reverse("forge:worker-detail", kwargs={"pk": self.pk})
+        # return reverse("forge:worker-detail", kwargs={"pk": self.pk})
+        return reverse("forge:index")
 
     def __str__(self):
         return f"{self.username} ({self.first_name} {self.last_name})"

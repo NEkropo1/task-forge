@@ -1,8 +1,11 @@
+from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
+from django.views import generic
 
+from forge.forms import WorkerRegisterForm
 from forge.models import Worker
 
 
@@ -28,3 +31,22 @@ def index(request):
     }
 
     return render(request, "forge/index.html", context=context)
+
+
+class WorkerRegistrationView(generic.CreateView):
+    FIELDS_TO_POP = ["hire_date", "position", "status", "team"]
+    model = get_user_model()
+    form_class = WorkerRegisterForm
+    template_name = "registration/signup.html"
+    success_url = reverse_lazy("login")
+
+    def dispatch(self, request, *args, **kwargs):
+        if request.user.is_authenticated:
+            return redirect("forge:index")  # refactor this after everything provided
+        return super().dispatch(request, *args, **kwargs)
+
+    def get_form(self, form_class=None):
+        form = super().get_form(form_class)
+        for field in self.FIELDS_TO_POP:
+            form.fields.pop(field)
+        return form

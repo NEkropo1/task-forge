@@ -8,7 +8,8 @@ class WelcomeViewTest(TestCase):
         self.client = Client()
         self.user = get_user_model().objects.create_user(
             username="testuser",
-            password="testpass12345")
+            password="testpass12345"
+        )
 
     def test_welcome_view_redirects_to_index_if_authenticated(self):
         self.client.force_login(self.user)
