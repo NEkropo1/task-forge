@@ -84,7 +84,7 @@ class Position(models.Model):
 
 class Worker(AbstractUser):
     email = models.EmailField(unique=True, blank=False, null=False)
-    salary = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+    salary = models.PositiveIntegerField(blank=True, null=True)  # Monets
     about = models.TextField(blank=True, null=True)
     hire_date = models.DateField(blank=True, null=True)
     position = models.ForeignKey(
@@ -93,12 +93,12 @@ class Worker(AbstractUser):
     status = models.IntegerChoices
     team = models.ForeignKey(Team, on_delete=models.SET_NULL, null=True, blank=True)
 
-    def get_absolute_url(self):
-        return reverse("forge:user-detail", kwargs={"pk": self.pk})
-
     class Meta:
         verbose_name = "worker"
         verbose_name_plural = "workers"
+
+    def get_absolute_url(self):
+        return reverse("forge:user-detail", kwargs={"pk": self.pk})
 
     def __str__(self):
         return f"{self.username} ({self.first_name} {self.last_name})"
