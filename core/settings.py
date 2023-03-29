@@ -27,6 +27,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+# Feel free to add needed ips here, ATTENTION, only for sensitive data and debugs
 INTERNAL_IPS = [
     "127.0.0.1",
 ]

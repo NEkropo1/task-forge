@@ -44,8 +44,8 @@ class Task(models.Model):
         validators=[MinValueValidator(limit_value=datetime.date.today)]
     )
     is_completed = models.BooleanField(default=False)
-    priority = models.CharField(max_length=1, choices=PRIORITY_CHOICES)
-    assignees = models.ManyToManyField(
+    priority = models.CharField(max_length=1, choices=PRIORITY_CHOICES, blank=False)
+    workers = models.ManyToManyField(
         "Worker", related_name="tasks", through="TaskAssignment"
     )
     tag = models.ForeignKey(TaskType, on_delete=models.CASCADE)
@@ -56,9 +56,9 @@ class Task(models.Model):
 
 class TaskAssignment(models.Model):
     task = models.ForeignKey(Task, on_delete=models.CASCADE)
-    assignee = models.ForeignKey("Worker", on_delete=models.CASCADE)
     assigned_date = models.DateField(auto_now_add=True)
-    project = models.ForeignKey("Project", on_delete=models.CASCADE, related_name="tasks")
+    assignee = models.ForeignKey("Worker", on_delete=models.CASCADE, related_name="assignees")
+    project = models.ForeignKey("Project", on_delete=models.CASCADE, related_name="projects")
 
     def __str__(self):
         return (
@@ -83,13 +83,14 @@ class Position(models.Model):
 
 
 class Worker(AbstractUser):
-    email = models.EmailField(unique=True, required=True)
+    email = models.EmailField(unique=True, blank=False, null=False)
     salary = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
     about = models.TextField(blank=True, null=True)
     hire_date = models.DateField(blank=True, null=True)
     position = models.ForeignKey(
         Position, on_delete=models.SET_NULL, null=True, blank=True
     )
+    status = models.IntegerChoices
     team = models.ForeignKey(Team, on_delete=models.SET_NULL, null=True, blank=True)
 
     def get_absolute_url(self):
@@ -107,6 +108,7 @@ class Project(models.Model):
     name = models.CharField(max_length=255)
     description = models.TextField()
     manager = models.ForeignKey("ProjectManager", on_delete=models.CASCADE, related_name="projects")
+    is_completed = models.BooleanField(default=False)
     start_date = models.DateField(
         validators=[MinValueValidator(limit_value=datetime.date.today)]
     )
@@ -119,9 +121,9 @@ class Project(models.Model):
 
 
 class ProjectTaskAssignment(models.Model):
-    task = models.ForeignKey(Task, on_delete=models.CASCADE)
-    project = models.ForeignKey(Project, on_delete=models.CASCADE)
-    assignee = models.ForeignKey(Worker, on_delete=models.CASCADE)
+    task = models.ForeignKey(Task, on_delete=models.CASCADE, related_name="tasks")
+    project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name="project")
+    assignee = models.ForeignKey(Worker, on_delete=models.CASCADE, related_name="workers")
 
     def __str__(self):
         return (
@@ -131,4 +133,4 @@ class ProjectTaskAssignment(models.Model):
 
 
 class ProjectManager(models.Model):
-    worker = models.OneToOneField(Worker, on_delete=models.CASCADE)
+    worker = models.ForeignKey(Worker, on_delete=models.CASCADE, related_name="manager")
