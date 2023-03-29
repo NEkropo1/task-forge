@@ -1,0 +1,18 @@
+body {
+    margin-top: 20px;
+    background-color: #34373b;
+    color: #afafaf;
+}
+a {
+    color: #1DA1F2;
+}
+
+::selection {
+    background-color: #FFAD1F;
+    color: #afafaf;
+}
+
+.link-to-page {
+    float: right;
+    margin: 0 2px 0 2px;
+}
