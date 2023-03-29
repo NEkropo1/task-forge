@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 
-from forge.models import Worker, Position, TaskType, Project
+from forge.models import Worker, Position, TaskType, Project, ProjectManager
 
 
 # Register your models here.
@@ -9,14 +9,21 @@ from forge.models import Worker, Position, TaskType, Project
 class WorkerAdmin(UserAdmin):
     list_display = UserAdmin.list_display + ("about",)
     fieldsets = UserAdmin.fieldsets + (
-        (("Additional info", {"fields": (
-            "salary",
-            "about",
-            "hire_date",
-            "position",
-            "status",
-            "team",
-        )}),)
+        (
+            (
+                "Additional info",
+                {
+                    "fields": (
+                        "salary",
+                        "about",
+                        "hire_date",
+                        "position",
+                        "status",
+                        "team",
+                    )
+                },
+            ),
+        )
     )
     add_fieldsets = UserAdmin.add_fieldsets + (
         (
@@ -41,14 +48,15 @@ class WorkerAdmin(UserAdmin):
 
 @admin.register(Project)
 class ProjectAdmin(admin.ModelAdmin):
-    list_display = ('name', 'manager', 'is_completed', 'start_date', 'deadline')
-    list_filter = ('manager', 'is_completed')
-    search_fields = ('name', 'description')
-    date_hierarchy = 'start_date'
+    list_display = ("name", "manager", "is_completed", "start_date", "deadline")
+    list_filter = ("manager", "is_completed")
+    search_fields = ("name", "description")
+    date_hierarchy = "start_date"
     fieldsets = (
-        (None, {'fields': ('name', 'description', 'manager')}),
-        ('Dates', {'fields': ('start_date', 'deadline', 'is_completed')}),
+        ("General info", {"fields": ("name", "description", "manager")}),
+        ("Dates", {"fields": ("start_date", "deadline", "is_completed")}),
     )
+
 
 @admin.register(Position)
 class PositionAdmin(admin.ModelAdmin):
@@ -58,3 +66,8 @@ class PositionAdmin(admin.ModelAdmin):
 @admin.register(TaskType)
 class TaskTypeAdmin(admin.ModelAdmin):
     list_display = ("name",)
+
+
+@admin.register(ProjectManager)
+class ProjectManagerAdmin(admin.ModelAdmin):
+    list_display = ("worker",)

@@ -150,3 +150,6 @@ class ProjectTaskAssignment(models.Model):
 
 class ProjectManager(models.Model):
     worker = models.ForeignKey(Worker, on_delete=models.CASCADE, related_name="manager")
+
+    def __str__(self):
+        return str(self.worker.email)
