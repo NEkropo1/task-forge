@@ -28,7 +28,7 @@ class WorkerAdmin(UserAdmin):
                         "last_name",
                         "salary",
                         "about",
-                        "hire_date"
+                        "hire_date",
                         "position",
                         "status",
                         "team",
