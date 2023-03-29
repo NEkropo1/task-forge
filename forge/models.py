@@ -69,10 +69,17 @@ class TaskAssignment(models.Model):
 
 class Team(models.Model):
     name = models.CharField(max_length=110, unique=True)
-    members = models.ManyToManyField("Worker", blank=False, related_name="teams")
+    members = models.ManyToManyField("Worker", blank=True, related_name="teams")
 
     def __str__(self):
         return self.name
+
+    def save(self, *args, **kwargs):
+        if not self.pk:
+            manager = Worker.objects.filter(position__name="Manager").first()
+            if manager:
+                self.members.add(manager)
+        super(Team, self).save(*args, **kwargs)
 
 
 class Position(models.Model):
@@ -93,7 +100,7 @@ class Worker(AbstractUser):
     )
 
     email = models.EmailField(unique=True, blank=False, null=False)
-    salary = models.PositiveIntegerField(blank=True, null=True)  # Monets
+    salary = models.PositiveIntegerField(blank=True, null=True)  # Coins
     about = models.TextField(blank=True, null=True)
     hire_date = models.DateField(blank=True, null=True)
     position = models.ForeignKey(
