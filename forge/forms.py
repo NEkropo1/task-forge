@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import get_user_model
-from .models import Worker, Position, Team, ProjectManager
+from .models import Worker, Position, Team
 
 
 class WorkerRegisterForm(UserCreationForm):
@@ -69,7 +69,7 @@ class TeamForm(forms.ModelForm):
     )
 
     forms.ModelChoiceField(
-        queryset=ProjectManager.objects.all(),
+        queryset=Worker.objects.select_related("position").filter(position__name__icontains="ProjectManager"),
         required=False,
         empty_label=None,
         label="Project Manager"

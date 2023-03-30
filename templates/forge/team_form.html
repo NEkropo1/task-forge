@@ -3,8 +3,7 @@
 
 {% block content %}
   <h1>{{ object|yesno:"Update,Create" }} TEAM</h1>
-  {% if worker.position.name == "ProjectManager" %}
-    <h2>Create Team</h2>
-    <a href="{% url 'forge:team-create' %}" class="btn btn-primary">Create Team</a>
+  {% if request.user.position.name == "ProjectManager" %}
+    <a href="{{ user.get_absolute_url }}" class="btn btn-primary">You can create it here if you can!</a>
   {% endif %}
 {% endblock %}

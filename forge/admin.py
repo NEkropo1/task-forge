@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 
-from forge.models import Worker, Position, TaskType, Project, ProjectManager
+from forge.models import Worker, Position, TaskType, Project
 
 
 # Register your models here.
@@ -66,8 +66,3 @@ class PositionAdmin(admin.ModelAdmin):
 @admin.register(TaskType)
 class TaskTypeAdmin(admin.ModelAdmin):
     list_display = ("name",)
-
-
-@admin.register(ProjectManager)
-class ProjectManagerAdmin(admin.ModelAdmin):
-    list_display = ("worker",)

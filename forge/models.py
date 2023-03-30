@@ -2,6 +2,7 @@ from __future__ import annotations
 import datetime
 
 from django.contrib.auth.base_user import BaseUserManager
+from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator
 from django.contrib.auth.models import AbstractUser
 from django.db import models
@@ -63,12 +64,10 @@ class TaskAssignment(models.Model):
     assignee = models.ForeignKey(
         "Worker",
         on_delete=models.CASCADE,
-        related_name="assignees"
     )
     project = models.ForeignKey(
         "Project",
         on_delete=models.CASCADE,
-        related_name="projects"
     )
 
     def __str__(self):
@@ -103,7 +102,7 @@ class Worker(AbstractUser):
         Position, on_delete=models.SET_NULL, null=True, blank=True
     )
     status = models.PositiveSmallIntegerField(choices=STATUS_CHOICES, default=NOT_WORKER)
-    team = models.ForeignKey("Team", on_delete=models.SET_NULL, null=True, blank=True)
+    team = models.ForeignKey("Team", on_delete=models.SET_NULL, null=True, blank=True, related_name="assignees")
 
     class Meta:
         verbose_name = "worker"
@@ -113,14 +112,18 @@ class Worker(AbstractUser):
         return reverse("forge:worker-detail", kwargs={"pk": self.pk})
 
     def __str__(self):
-        return f"{self.username} ({self.first_name} {self.last_name})"
+        if self.position and self.position.name == "ProjectManager":
+            return f"{str(self.position).capitalize()}: `{self.first_name}` {self.email}"
+        elif self.position:
+            return f"Worker: {self.position} ({self.first_name} {self.last_name})"
+        return f"Attendant: {self.username} ({self.first_name} {self.last_name})"
 
 
 class Team(models.Model):
     name = models.CharField(max_length=110, unique=True)
-    members = models.ManyToManyField(Worker, blank=True, related_name="teams")
+    members = models.ManyToManyField(Worker, blank=True, related_name="in_teams")
     project_manager = models.ForeignKey(
-        "ProjectManager",
+        Worker,
         blank=True,
         related_name="teams",
         on_delete=models.CASCADE,
@@ -129,12 +132,17 @@ class Team(models.Model):
     def __str__(self):
         return self.name
 
+    def clean(self):
+        if self.project_manager.position.name != "ProjectManager":
+            raise ValidationError("Manager must have position of ProjectManager.")
+        super().clean()
+
 
 class Project(models.Model):
     name = models.CharField(max_length=255)
     description = models.TextField()
     manager = models.ForeignKey(
-        "ProjectManager",
+        Worker,
         on_delete=models.CASCADE,
         related_name="projects"
     )
@@ -156,18 +164,22 @@ class Project(models.Model):
     def __str__(self):
         return self.name
 
+    def clean(self):
+        if self.manager.position.name != "ProjectManager":
+            raise ValidationError("Manager must have position of ProjectManager.")
+        super().clean()
+
 
 class ProjectTaskAssignment(models.Model):
-    task = models.ForeignKey(Task, on_delete=models.CASCADE, related_name="tasks")
+    task = models.ForeignKey(Task, on_delete=models.CASCADE)
     project = models.ForeignKey(
         Project,
         on_delete=models.CASCADE,
-        related_name="project"
     )
     assignee = models.ForeignKey(
         Worker,
         on_delete=models.CASCADE,
-        related_name="workers"
+        related_name="project_tasks"
     )
 
     def __str__(self):
@@ -175,10 +187,3 @@ class ProjectTaskAssignment(models.Model):
             f"{self.task.title} assigned to {self.project.name} "
             "on {self.project.start_date} by {self.assignee.username}"
         )
-
-
-class ProjectManager(models.Model):
-    worker = models.ForeignKey(Worker, on_delete=models.CASCADE, related_name="manager")
-
-    def __str__(self):
-        return str(self.worker.email)

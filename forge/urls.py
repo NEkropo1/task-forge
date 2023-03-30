@@ -5,8 +5,7 @@ from forge.views import (
     welcome,
     WorkerRegistrationView,
     WorkerDetailView,
-    TeamCreateView,
-    TaskListView,
+    TaskListView, TeamCreateView,
 )
 
 urlpatterns = [

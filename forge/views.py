@@ -64,7 +64,7 @@ class TaskListView(LoginRequiredMixin, generic.ListView):
 
 class WorkerDetailView(LoginRequiredMixin, generic.DetailView):
     model = get_user_model()
-    queryset = get_user_model().objects.select_related("team")
+    queryset = get_user_model().objects.select_related("team", "position")
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
