@@ -18,7 +18,10 @@ class WorkerRegisterForm(UserCreationForm):
     )
 
     about = forms.CharField(
-        widget=forms.Textarea(attrs={"placeholder": "Skills and anything about you", "rows": "3"})
+        widget=forms.Textarea(attrs={
+            "placeholder": "Skills and anything about you",
+            "rows": "3"
+        })
     )
 
     hire_date = forms.DateField(
@@ -56,3 +59,10 @@ class WorkerRegisterForm(UserCreationForm):
             "status",
             "team"
         ]
+
+
+class TeamForm(forms.ModelForm):
+    class Meta:
+        model = Team
+        fields = ["name"]
+

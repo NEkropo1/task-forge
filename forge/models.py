@@ -33,10 +33,10 @@ class TaskType(models.Model):
 
 class Task(models.Model):
     PRIORITY_CHOICES = (
-        ("U", "Urgent"),
-        ("H", "High"),
-        ("M", "Medium"),
-        ("L", "Low"),
+        ("1", "Urgent"),
+        ("2", "High"),
+        ("3", "Medium"),
+        ("4", "Low"),
     )
     title = models.CharField(max_length=255)
     description = models.TextField()
@@ -48,7 +48,10 @@ class Task(models.Model):
     workers = models.ManyToManyField(
         "Worker", related_name="tasks", through="TaskAssignment"
     )
-    tag = models.ForeignKey(TaskType, on_delete=models.CASCADE)
+    tag = models.ForeignKey(TaskType, on_delete=models.CASCADE, related_name="tasks")
+
+    class Meta:
+        ordering = ["priority"]
 
     def __str__(self):
         return self.title
@@ -122,8 +125,7 @@ class Worker(AbstractUser):
         verbose_name_plural = "workers"
 
     def get_absolute_url(self):
-        # return reverse("forge:worker-detail", kwargs={"pk": self.pk})
-        return reverse("forge:index")
+        return reverse("forge:worker-detail", kwargs={"pk": self.pk})
 
     def __str__(self):
         return f"{self.username} ({self.first_name} {self.last_name})"

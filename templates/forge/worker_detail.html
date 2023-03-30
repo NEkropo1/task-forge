@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% load crispy_forms_filters %}
+
+{% block content %}
+  <h1>{{ worker.first_name }} {{ worker.last_name }}</h1>
+  <p>Email: {{ worker.email }}</p>
+  <p>Position: {{ worker.position }}</p>
+  {% if worker.position.name == "ProjectManager" %}
+    <h2>Create Team</h2>
+    <form method="post">
+      {% csrf_token %}
+      {{ team_form|crispy}}
+      <button type="submit">Create Team</button>
+    </form>
+  {% endif %}
+{% endblock %}
