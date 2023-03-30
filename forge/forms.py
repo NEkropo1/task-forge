@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import get_user_model
-from .models import Worker, Position, Team
+from .models import Worker, Position, Team, ProjectManager
 
 
 class WorkerRegisterForm(UserCreationForm):
@@ -62,7 +62,24 @@ class WorkerRegisterForm(UserCreationForm):
 
 
 class TeamForm(forms.ModelForm):
+    members = forms.ModelMultipleChoiceField(
+        queryset=Worker.objects.all(),
+        widget=forms.CheckboxSelectMultiple,
+        required=False,
+    )
+
+    forms.ModelChoiceField(
+        queryset=ProjectManager.objects.all(),
+        required=False,
+        empty_label=None,  # to remove the default "--------" option
+        label="Project Manager"  # optional custom label
+    )
+
     class Meta:
         model = Team
-        fields = ["name"]
+        fields = [
+            "name",
+            "project_manager",
+            "members"
+        ]
 

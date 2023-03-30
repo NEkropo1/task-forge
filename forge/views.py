@@ -1,13 +1,14 @@
 from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.views import generic
 
 from forge.forms import WorkerRegisterForm, TeamForm
-from forge.models import Worker, Task
+from forge.models import Worker, Task, Team
 
 
 # Create your views here.
@@ -53,7 +54,7 @@ class WorkerRegistrationView(generic.CreateView):
         return form
 
 
-class TaskListView(generic.ListView):
+class TaskListView(LoginRequiredMixin, generic.ListView):
     model = Task
     context_object_name = "tasks"
 
@@ -61,16 +62,14 @@ class TaskListView(generic.ListView):
         return Task.objects.prefetch_related("workers__email")
 
 
-class WorkerDetailView(generic.DetailView):
+class WorkerDetailView(LoginRequiredMixin, generic.DetailView):
     model = get_user_model()
-
-    def get_queryset(self):
-        return get_user_model().objects.select_related("team")
+    queryset = get_user_model().objects.select_related("team")
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         worker = self.get_object()
-        if worker.position and worker.position.name == "Manager":
+        if worker.position and worker.position.name == "ProjectManager":
             context["team_form"] = TeamForm()
         return context
 
@@ -82,8 +81,13 @@ class WorkerDetailView(generic.DetailView):
                 team = team_form.save()
                 team.members.add(worker)
                 messages.success(request, "Team created successfully.")
-                return redirect("forge:worker-detail", pk=worker.pk)
+                return redirect("team-create")  # redirect to the TeamCreateView
             else:
                 messages.error(request, "Error creating team.")
                 print(team_form.errors)  # print form errors to console
         return self.get(request, *args, **kwargs)
+
+
+class TeamCreateView(LoginRequiredMixin, generic.CreateView):
+    model = Team
+    form_class = TeamForm

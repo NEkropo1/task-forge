@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% load crispy_forms_filters %}
+
+{% block content %}
+  <h1>{{ object|yesno:"Update,Create" }} TEAM</h1>
+  {% if worker.position.name == "ProjectManager" %}
+    <h2>Create Team</h2>
+    <a href="{% url 'forge:team-create' %}" class="btn btn-primary">Create Team</a>
+  {% endif %}
+{% endblock %}

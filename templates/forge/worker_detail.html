@@ -5,7 +5,7 @@
   <h1>{{ worker.first_name }} {{ worker.last_name }}</h1>
   <p>Email: {{ worker.email }}</p>
   <p>Position: {{ worker.position }}</p>
-  {% if worker.position.name == "ProjectManager" %}
+  {% if self.object.position.name == "ProjectManager" %}
     <h2>Create Team</h2>
     <form method="post">
       {% csrf_token %}

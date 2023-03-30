@@ -78,21 +78,6 @@ class TaskAssignment(models.Model):
         )
 
 
-class Team(models.Model):
-    name = models.CharField(max_length=110, unique=True)
-    members = models.ManyToManyField("Worker", blank=True, related_name="teams")
-
-    def __str__(self):
-        return self.name
-
-    def save(self, *args, **kwargs):
-        if not self.pk:
-            manager = Worker.objects.filter(position__name="Manager").first()
-            if manager:
-                self.members.add(manager)
-        super(Team, self).save(*args, **kwargs)
-
-
 class Position(models.Model):
     name = models.CharField(max_length=127, unique=True)
 
@@ -118,7 +103,7 @@ class Worker(AbstractUser):
         Position, on_delete=models.SET_NULL, null=True, blank=True
     )
     status = models.PositiveSmallIntegerField(choices=STATUS_CHOICES, default=NOT_WORKER)
-    team = models.ForeignKey(Team, on_delete=models.SET_NULL, null=True, blank=True)
+    team = models.ForeignKey("Team", on_delete=models.SET_NULL, null=True, blank=True)
 
     class Meta:
         verbose_name = "worker"
@@ -129,6 +114,20 @@ class Worker(AbstractUser):
 
     def __str__(self):
         return f"{self.username} ({self.first_name} {self.last_name})"
+
+
+class Team(models.Model):
+    name = models.CharField(max_length=110, unique=True)
+    members = models.ManyToManyField(Worker, blank=True, related_name="teams")
+    project_manager = models.ForeignKey(
+        "ProjectManager",
+        blank=True,
+        related_name="teams",
+        on_delete=models.CASCADE,
+    )
+
+    def __str__(self):
+        return self.name
 
 
 class Project(models.Model):
