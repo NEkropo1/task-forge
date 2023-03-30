@@ -114,7 +114,7 @@ AUTH_PASSWORD_VALIDATORS = [
 AUTH_USER_MODEL = "forge.Worker"
 
 LOGOUT_REDIRECT_URL = "forge:welcome"
-LOGIN_REDIRECT_URL = "forge:index"
+LOGIN_REDIRECT_URL = "forge:task-list"
 LOGIN_URL = "forge:welcome"
 
 # Internationalization

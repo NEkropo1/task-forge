@@ -1,16 +1,61 @@
 {% extends "base.html" %}
 {% load crispy_forms_filters %}
 
-{% block content %}
-  <h1>{{ worker.first_name }} {{ worker.last_name }}</h1>
-  <p>Email: {{ worker.email }}</p>
-  <p>Position: {{ worker.position }}</p>
-  {% if request.user.position.name == "ProjectManager" and worker.position == request.user.position %}
-    <h2>Create Team</h2>
-    <form method="post">
-      {% csrf_token %}
-      {{ team_form|crispy}}
-      <button type="submit" class="btn btn-primary">Create Team</button>
-    </form>
+{% block personal %}
+  {% if request.user.position %}
+      <h2>Projects
+        {% if request.user.position.name == "ProjectManager" and worker.position == request.user.position %}
+          <a href="{% url 'forge:project-create' %}" class="btn btn-primary link-to-page">
+        {% endif %}
+            Create Project</a>
+      </h2>
+      {% for project in request.user.projects.all %}
+        <a href="{% url 'forge:project-detail' project.pk %}"></a>
+            <h1>{{ project.name }} by {{ project.manager.first_name }}</h1>
+              <ul>
+              <li>Description: {{ project.description }}</li>
+              <li>Start Date: {{ project.start_date }}</li>
+              <li>Submit Date: {{ project.deadline }}</li>
+              <li>Manager: {{ project.manager }}</li>
+              </ul>
+
+        <br>
+      {% endfor %}
+    <h2>Teams
+      {% if request.user.position.name == "ProjectManager" and worker.position == request.user.position %}
+        <a href="{% url 'forge:team-create' %}" class="btn btn-primary link-to-page">
+          {% endif %}
+          Create Team
+        </a>
+    </h2>
+    {% for team in request.user.teams.all %}
+      <a href="{% url 'forge:team-detail' team.pk %}">{{ team.name }}</a><br>
+
+    {% endfor %}
   {% endif %}
+
+{% endblock %}
+
+{% block content %}
+
+  <h2>
+  {% if request.user.position.name == "ProjectManager" or request.user in project.team.members.all %}
+      <a href="{% url 'forge:project-task-create' %}" class="btn btn-primary link-to-page"  >Create task</a>
+  {% endif %}
+  </h2>
+
+
+    {% if project.tasks.all %}
+    <ul>
+    {% for task in project.tasks.all %}
+      <li>{{ task.name }}</li>
+    {% endfor %}
+    </ul>
+
+    {% else %}
+      No tasks right now.
+
+    {% endif %}
+
+
 {% endblock %}

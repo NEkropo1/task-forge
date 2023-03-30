@@ -67,6 +67,8 @@ class TaskAssignment(models.Model):
     )
     project = models.ForeignKey(
         "Project",
+        blank=True,
+        null=True,
         on_delete=models.CASCADE,
     )
 
@@ -168,22 +170,3 @@ class Project(models.Model):
         if self.manager.position.name != "ProjectManager":
             raise ValidationError("Manager must have position of ProjectManager.")
         super().clean()
-
-
-class ProjectTaskAssignment(models.Model):
-    task = models.ForeignKey(Task, on_delete=models.CASCADE)
-    project = models.ForeignKey(
-        Project,
-        on_delete=models.CASCADE,
-    )
-    assignee = models.ForeignKey(
-        Worker,
-        on_delete=models.CASCADE,
-        related_name="project_tasks"
-    )
-
-    def __str__(self):
-        return (
-            f"{self.task.title} assigned to {self.project.name} "
-            "on {self.project.start_date} by {self.assignee.username}"
-        )

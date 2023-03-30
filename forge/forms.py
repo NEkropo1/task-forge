@@ -1,7 +1,41 @@
+import datetime
+
 from django import forms
+from django.core.exceptions import ValidationError
+from django.core.validators import MinValueValidator
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import get_user_model
-from .models import Worker, Position, Team
+from .models import Worker, Position, Team, Project, TaskType, Task
+
+
+class ProjectCreateForm(forms.ModelForm):
+    name = forms.CharField(max_length=255)
+    description = forms.CharField(widget=forms.Textarea(attrs={"rows": 3}))
+    manager = forms.ModelChoiceField(
+        queryset=Worker.objects.filter(position__name='ProjectManager'),
+        widget=forms.Select(attrs={"class": "form-select"})
+    )
+    start_date = forms.DateField(widget=forms.DateInput(attrs={"type": "date"}))
+    deadline = forms.DateField(
+        widget=forms.DateInput(attrs={"type": "date"}),
+        validators=[MinValueValidator(limit_value=datetime.date.today)]
+    )
+
+    class Meta:
+        model = Project
+        fields = [
+            "name",
+            "description",
+            "manager",
+            "start_date",
+            "deadline",
+        ]
+
+    def clean(self):
+        manager = self.cleaned_data.get("manager")
+        if manager and manager.position.name != "ProjectManager":
+            raise ValidationError("Manager must have position of ProjectManager.")
+        super().clean()
 
 
 class WorkerRegisterForm(UserCreationForm):
@@ -58,6 +92,56 @@ class WorkerRegisterForm(UserCreationForm):
             "position",
             "status",
             "team"
+        ]
+
+
+class TaskSearchForm(forms.Form):
+    name = forms.CharField(
+        max_length=255,
+        required=False,
+        label="",
+        widget=forms.TextInput(
+            attrs={
+                "placeholder": "Search tasks here",
+            }
+        ),
+    )
+
+
+class TaskForm(forms.ModelForm):
+    workers = forms.ModelMultipleChoiceField(
+        queryset=Worker.objects.prefetch_related("tasks__tag").filter(status__gt=0),
+        widget=forms.CheckboxSelectMultiple,
+        required=False,
+    )
+
+    tag = forms.ModelChoiceField(
+        queryset=TaskType.objects.all(),
+        empty_label=None,
+        label="Task Type"
+    )
+    deadline = forms.DateField(
+        widget=forms.DateInput(attrs={"type": "date"}),
+        validators=[MinValueValidator(limit_value=datetime.date.today)]
+    )
+
+    project = forms.ModelChoiceField(
+        queryset=Project.objects.all(),
+        empty_label=None,
+        required=True,
+    )
+
+    class Meta:
+        model = Task
+        fields = [
+            "title",
+            "description",
+            "deadline",
+            "is_completed",
+            "priority",
+            "workers",
+            "tag",
+            "project",
         ]
 
 

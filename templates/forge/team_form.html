@@ -3,7 +3,9 @@
 
 {% block content %}
   <h1>{{ object|yesno:"Update,Create" }} TEAM</h1>
-  {% if request.user.position.name == "ProjectManager" %}
-    <a href="{{ user.get_absolute_url }}" class="btn btn-primary">You can create it here if you can!</a>
-  {% endif %}
+  <form action="" method="post" novalidate>
+    {% csrf_token %}
+    {{ form|crispy }}
+    <input type="submit" value="Submit" class="btn btn-primary">
+  </form>
 {% endblock %}

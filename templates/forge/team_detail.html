@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <h1>{{ team.name }}</h1>
+  <ul>
+    {% for worker in team.members.all %}
+      <h2>{{ worker.position }}</h2>
+      <li>{{ worker.first_name }} {{ worker.last_name }} email: {{ worker.email }}</li>
+      <li>{{ worker.about }}</li>
+    {% empty %}
+      <li>No tasks right now.</li>
+    {% endfor %}
+  </ul>
+{% endblock %}

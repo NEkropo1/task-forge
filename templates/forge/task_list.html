@@ -1,14 +1,17 @@
 {% extends "base.html" %}
 {% load crispy_forms_filters %}
 
-{% block content %}
+{% block personal %}
   <h1>
-    Task List
-{#    <a href="{% url 'task-create' %}" class="btn btn-primary link-to-page">#}
-{#      Create#}
+    {% if request.user.position %}
+    <a href="{% url 'forge:project-task-create' %}" class="btn btn-primary link-to-page">
+      Create task
     </a>
+    {% endif %}
   </h1>
+{% endblock %}
 
+{% block content %}
   <form action="" method="get" class="form-inline">
     {{ search_form|crispy }}
     <input type="submit" value="🔎" class="button btn-secondary">
@@ -23,29 +26,23 @@
           <th>Deadline</th>
           <th>Priority</th>
           <th>Workers</th>
-          <th>Is Completed</th>
+          <th>Completed?</th>
         </tr>
       </thead>
       <tbody>
         {% for task in tasks %}
-          <tr class="{% if task.is_completed %}table-success{% endif %}">
-{#            <td><a href="{% url 'task-detail' pk=task.pk %}">{{ task.pk }}</a></td>#}
-            <td>{{ task.pk }}</td>
-            <td>{{ task.title }}</td>
-            <td>{{ task.deadline }}</td>
-            <td>{{ task.get_priority_display }}</td>
-            <td>
-              {% for worker in task.workers.all %}
-                {{ worker.email }}
-                {% if not forloop.last %}, {% endif %}
-              {% endfor %}
-            </td>
-            <td>{{ task.is_completed }}</td>
+          <tr class="priority-{{ task.priority }}">
+              <td>{{ task.pk }}</td>
+              <td>{{ task.title }}</td>
+              <td>{{ task.deadline }}</td>
+              <td>{{ task.get_priority_display }}</td>
+              <td>{{ task.workers.all|length }}</td>
+              <td>{{ task.is_completed }}</td>
           </tr>
         {% endfor %}
       </tbody>
     </table>
   {% else %}
-    <p>There are no tasks.</p>
+    <p>There are no tasks for you right now, drink a coffee or add a task :)</p>
   {% endif %}
 {% endblock %}

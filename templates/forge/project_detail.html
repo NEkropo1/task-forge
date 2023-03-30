@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <h1>{{ project.name }}</h1>
+  <p>Manager: {{ project.manager }}</p>
+  <p>Description: {{ project.description }}</p>
+  <p>Start Date: {{ project.start_date }}</p>
+  <p>Submit Date: {{ project.deadline }}</p>
+
+  <h2>Tasks:</h2>
+  <ul>
+    {% for task in project.tasks.all %}
+      <li>{{ task.name }}</li>
+    {% empty %}
+      <li>No tasks right now.</li>
+    {% endfor %}
+  </ul>
+{% endblock %}
