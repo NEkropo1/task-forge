@@ -71,8 +71,8 @@ class TeamForm(forms.ModelForm):
     forms.ModelChoiceField(
         queryset=ProjectManager.objects.all(),
         required=False,
-        empty_label=None,  # to remove the default "--------" option
-        label="Project Manager"  # optional custom label
+        empty_label=None,
+        label="Project Manager"
     )
 
     class Meta:
