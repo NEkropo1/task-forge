@@ -12,7 +12,7 @@ class ProjectCreateForm(forms.ModelForm):
     name = forms.CharField(max_length=255)
     description = forms.CharField(widget=forms.Textarea(attrs={"rows": 3}))
     manager = forms.ModelChoiceField(
-        queryset=Worker.objects.filter(position__name='ProjectManager'),
+        queryset=Worker.objects.filter(position__name="ProjectManager"),
         widget=forms.Select(attrs={"class": "form-select"})
     )
     start_date = forms.DateField(widget=forms.DateInput(attrs={"type": "date"}))
@@ -35,7 +35,63 @@ class ProjectCreateForm(forms.ModelForm):
         manager = self.cleaned_data.get("manager")
         if manager and manager.position.name != "ProjectManager":
             raise ValidationError("Manager must have position of ProjectManager.")
+
         super().clean()
+
+
+class WorkerHireForm(forms.ModelForm):
+    email = forms.EmailField(
+        widget=forms.TextInput(attrs={"placeholder": "E-mail"})
+    )
+
+    salary = forms.IntegerField(
+        widget=forms.NumberInput(attrs={"placeholder": "Wanted salary"})
+    )
+
+    hire_date = forms.DateField(
+        widget=forms.DateInput(attrs={"type": "date"})
+    )
+
+    position = forms.ModelChoiceField(
+        queryset=Position.objects.all(),
+        widget=forms.Select(attrs={"class": "form-select"}),
+    )
+
+    status = forms.ChoiceField(
+        choices=Worker.STATUS_CHOICES[1:],
+        widget=forms.RadioSelect(attrs={"class": "form-check-input"}),
+        required=False
+    )
+
+    team = forms.ModelChoiceField(
+        queryset=Team.objects.all(),
+        widget=forms.Select(attrs={"class": "form-select"}),
+        required=False
+    )
+
+    class Meta:
+        model = Worker
+        fields = [
+            "email",
+            "salary",
+            "hire_date",
+            "position",
+            "status",
+            "team"
+        ]
+
+    def clean(self):
+        team = self.cleaned_data.get("team")
+        status = self.cleaned_data.get("status")
+
+        if  not team and str(status) == "1":
+            raise ValidationError("Worker in a team can't be a 'free agent'")
+
+        if str(status) == "2" and team:
+            raise ValidationError("Worker cannot be a 'free agent' "
+                                  "if assigned to a team.")
+
+        return self.cleaned_data
 
 
 class WorkerRegisterForm(UserCreationForm):
@@ -93,6 +149,19 @@ class WorkerRegisterForm(UserCreationForm):
             "status",
             "team"
         ]
+
+
+class WorkerSearchForm(forms.Form):
+    name = forms.CharField(
+        max_length=255,
+        required=False,
+        label="",
+        widget=forms.TextInput(
+            attrs={
+                "placeholder": "Search workers by name here",
+            }
+        ),
+    )
 
 
 class TaskSearchForm(forms.Form):
@@ -153,7 +222,11 @@ class TeamForm(forms.ModelForm):
     )
 
     forms.ModelChoiceField(
-        queryset=Worker.objects.select_related("position").filter(position__name__icontains="ProjectManager"),
+        queryset=Worker.objects.select_related(
+            "position"
+        ).filter(
+            position__name__icontains="ProjectManager"
+        ),
         required=False,
         empty_label=None,
         label="Project Manager"
@@ -166,4 +239,3 @@ class TeamForm(forms.ModelForm):
             "project_manager",
             "members"
         ]
-

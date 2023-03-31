@@ -104,7 +104,13 @@ class Worker(AbstractUser):
         Position, on_delete=models.SET_NULL, null=True, blank=True
     )
     status = models.PositiveSmallIntegerField(choices=STATUS_CHOICES, default=NOT_WORKER)
-    team = models.ForeignKey("Team", on_delete=models.SET_NULL, null=True, blank=True, related_name="assignees")
+    team = models.ForeignKey(
+        "Team",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="assignees"
+    )
 
     class Meta:
         verbose_name = "worker"

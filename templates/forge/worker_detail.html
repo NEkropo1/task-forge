@@ -10,16 +10,9 @@
             Create Project</a>
       </h2>
       {% for project in request.user.projects.all %}
-        <a href="{% url 'forge:project-detail' project.pk %}"></a>
-            <h1>{{ project.name }} by {{ project.manager.first_name }}</h1>
-              <ul>
-              <li>Description: {{ project.description }}</li>
-              <li>Start Date: {{ project.start_date }}</li>
-              <li>Submit Date: {{ project.deadline }}</li>
-              <li>Manager: {{ project.manager }}</li>
-              </ul>
-
-        <br>
+        <a href="{% url 'forge:project-detail' project.pk %}">
+          <p>{{ project.name }} by {{ project.manager.first_name }}</p>
+        </a>
       {% endfor %}
     <h2>Teams
       {% if request.user.position.name == "ProjectManager" and worker.position == request.user.position %}
@@ -43,19 +36,6 @@
       <a href="{% url 'forge:project-task-create' %}" class="btn btn-primary link-to-page"  >Create task</a>
   {% endif %}
   </h2>
-
-
-    {% if project.tasks.all %}
-    <ul>
-    {% for task in project.tasks.all %}
-      <li>{{ task.name }}</li>
-    {% endfor %}
-    </ul>
-
-    {% else %}
-      No tasks right now.
-
-    {% endif %}
 
 
 {% endblock %}

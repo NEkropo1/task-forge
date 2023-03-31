@@ -1,13 +1,22 @@
-from django.contrib import messages
+from django.core.exceptions import ValidationError
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy
+from django.views.decorators.http import require_POST
 from django.views import generic
 
-from forge.forms import WorkerRegisterForm, TeamForm, ProjectCreateForm, TaskForm, TaskSearchForm
+from forge.forms import (
+    WorkerRegisterForm,
+    TeamForm,
+    ProjectCreateForm,
+    TaskForm,
+    TaskSearchForm,
+    WorkerSearchForm,
+    WorkerHireForm
+)
 from forge.models import Worker, Task, Team, Project
 
 
@@ -35,6 +44,14 @@ def index(request):
     return render(request, "forge/index.html", context=context)
 
 
+@require_POST
+def complete_task(request, pk):
+    task = get_object_or_404(Task, pk=pk)
+    task.is_completed = True
+    task.save()
+    return redirect("forge:task-detail", pk=pk)
+
+
 class WorkerRegistrationView(generic.CreateView):
     FIELDS_TO_POP = ["hire_date", "position", "status", "team"]
     model = get_user_model()
@@ -57,7 +74,6 @@ class WorkerRegistrationView(generic.CreateView):
 class TaskCreateView(generic.CreateView):
     model = Task
     form_class = TaskForm
-    template_name = "forge/task_form.html"
 
     def get_success_url(self):
         return reverse_lazy("forge:task-list")
@@ -66,6 +82,7 @@ class TaskCreateView(generic.CreateView):
 class TaskListView(LoginRequiredMixin, generic.ListView):
     model = Task
     context_object_name = "tasks"
+    paginate_by = 7
 
     def get_queryset(self):
         queryset = Task.objects.prefetch_related("workers")
@@ -80,6 +97,33 @@ class TaskListView(LoginRequiredMixin, generic.ListView):
         return context
 
 
+class WorkerListView(LoginRequiredMixin, generic.ListView):
+    model = get_user_model()
+    context_object_name = "workers"
+    paginate_by = 10
+
+    def get_queryset(self):
+        queryset = get_user_model().objects.select_related("position")
+        name = self.request.GET.get("name")
+        if name:
+            return queryset.filter(first_name__icontains=name)
+        return queryset
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data()
+        name = self.request.GET.get("name", "")
+
+        context["search_form"] = WorkerSearchForm(initial={
+            "name": name
+        })
+        return context
+
+
+class TaskDetailView(LoginRequiredMixin, generic.DetailView):
+    model = Task
+    queryset = Task.objects.prefetch_related("workers__teams")
+
+
 class WorkerDetailView(LoginRequiredMixin, generic.DetailView):
     model = get_user_model()
     queryset = get_user_model().objects.select_related("team", "position")
@@ -92,6 +136,28 @@ class WorkerDetailView(LoginRequiredMixin, generic.DetailView):
         return context
 
 
+class WorkerHireView(LoginRequiredMixin, generic.UpdateView):
+    queryset = Worker.objects.all()
+    form_class = WorkerHireForm
+    template_name = "forge/worker_hire.html"
+
+    def get_success_url(self):
+        return reverse_lazy("forge:worker-detail", kwargs={"pk": self.kwargs["pk"]})
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        worker = form.save(commit=False)
+        worker.team = form.cleaned_data['team']
+        worker.status = form.cleaned_data['status']
+        try:
+            form.full_clean()
+        except ValidationError:
+            return self.form_invalid(form)
+        else:
+            worker.save()
+            return response
+
+
 class TeamCreateView(LoginRequiredMixin, generic.CreateView):
     model = Team
     form_class = TeamForm
@@ -99,6 +165,7 @@ class TeamCreateView(LoginRequiredMixin, generic.CreateView):
 
 class TeamDetailView(LoginRequiredMixin, generic.DetailView):
     model = Team
+    queryset = Team.objects.prefetch_related("members")
     context_object_name = "team"
 
 

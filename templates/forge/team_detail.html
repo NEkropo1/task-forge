@@ -2,13 +2,50 @@
 
 {% block content %}
   <h1>{{ team.name }}</h1>
-  <ul>
-    {% for worker in team.members.all %}
-      <h2>{{ worker.position }}</h2>
-      <li>{{ worker.first_name }} {{ worker.last_name }} email: {{ worker.email }}</li>
-      <li>{{ worker.about }}</li>
-    {% empty %}
-      <li>No tasks right now.</li>
-    {% endfor %}
-  </ul>
+  <table>
+    <thead>
+      <tr>
+        <th>Position</th>
+        <th>First Name</th>
+        <th>Last Name</th>
+        <th>Email</th>
+        <th>About</th>
+        <th>Details</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for worker in team.members.all %}
+        <tr>
+          <td>{{ worker.position }}</td>
+          <td>{{ worker.first_name }}</td>
+          <td>{{ worker.last_name }}</td>
+          <td>{{ worker.email }}</td>
+          <td>{{ worker.about }}</td>
+          <td><a href="{% url 'forge:worker-detail' worker.pk %}">View details</a></td>
+        </tr>
+      {% empty %}
+        <tr>
+          <td colspan="6">No workers in this team.</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% endblock %}
+
+
+{% block styles %}
+  <style>
+    table {
+      border-collapse: collapse;
+      width: 100%;
+    }
+    th, td {
+      padding: 8px;
+      text-align: left;
+      border-bottom: 4px solid #9b0000;
+    }
+    th {
+      background-color: #9d0000;
+    }
+  </style>
 {% endblock %}

@@ -31,14 +31,14 @@
       </thead>
       <tbody>
         {% for task in tasks %}
-          <tr class="priority-{{ task.priority }}">
-              <td>{{ task.pk }}</td>
-              <td>{{ task.title }}</td>
-              <td>{{ task.deadline }}</td>
-              <td>{{ task.get_priority_display }}</td>
-              <td>{{ task.workers.all|length }}</td>
-              <td>{{ task.is_completed }}</td>
-          </tr>
+        <tr class="priority-{{ task.priority }} task-row">
+          <td><a href="{% url 'forge:task-detail' pk=task.pk %}" class="task-link">{{ task.pk }}</a></td>
+          <td><a href="{% url 'forge:task-detail' pk=task.pk %}" class="task-link">{{ task.title }}</a></td>
+          <td><a href="{% url 'forge:task-detail' pk=task.pk %}" class="task-link">{{ task.deadline }}</a></td>
+          <td><a href="{% url 'forge:task-detail' pk=task.pk %}" class="task-link">{{ task.get_priority_display }}</a></td>
+          <td><a href="{% url 'forge:task-detail' pk=task.pk %}" class="task-link">{{ task.workers.all|length }}</a></td>
+          <td><a href="{% url 'forge:task-detail' pk=task.pk %}" class="task-link">{{ task.is_completed }}</a></td>
+        </tr>
         {% endfor %}
       </tbody>
     </table>

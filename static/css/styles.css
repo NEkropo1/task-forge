@@ -42,15 +42,50 @@ input[type=text], textarea {
 
 /* Change the color of the form button */
 .btn-primary {
-  background-color: #005b91;
+  background-color: #34373b;
   border-color: #005b91;
+}
+.form-control {
+  border: 1px solid #005b91;
 }
 
 /* Change the hover and focus color of the form button */
 .btn-primary:hover,
 .btn-primary:focus {
-  background-color: #935e01;
+  background-color: #34373b;
   border-color: #935e01;
+}
+
+.page-item.active .page-link {
+  color: #1DA1F2 !important;
+  background-color: #34373b !important;
+  border-color: #1DA1F2 !important;
+}
+
+.table thead th {
+  border-bottom-color: #1d2b3d;
+  border-left: 1px #1d2b3d;
+}
+
+.table td, .table th{
+  color: #7c7676;
+  cursor: pointer;
+}
+
+.table td, .table th {
+  border-top-color: #34373b;
+  border-bottom-color: #34373b;
+}
+
+.task-link {
+  color: #8c7d7d;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.task-link:hover {
+  color: #1178b7;
+  text-decoration: underline;
 }
 
 .list-group-item-custom {

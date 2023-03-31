@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block content %}
+  {% if user.status %}
+    <h1>{{ task.title }}</h1>
+    <br>
+    <p>{{ task.description }}</p>
+    <p>Deadline: {{ task.deadline }}</p>
+    {% if task.is_completed %}
+      <p>This task has been completed.</p>
+    {% else %}
+      <form method="post" action="{% url 'forge:complete-task' task.id %}">
+        {% csrf_token %}
+        <button type="submit" class="btn-primary page-link" onclick="return confirm('Are you sure you want to mark this task as completed?')">Mark as completed</button>
+      </form>
+    {% endif %}
+  {% else %}
+    <p>You do not have permission to view this task.</p>
+  {% endif %}
+{% endblock %}
