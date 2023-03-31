@@ -26,7 +26,6 @@
           <th>Deadline</th>
           <th>Priority</th>
           <th>Workers</th>
-          <th>Completed?</th>
         </tr>
       </thead>
       <tbody>
@@ -37,7 +36,6 @@
           <td><a href="{% url 'forge:task-detail' pk=task.pk %}" class="task-link">{{ task.deadline }}</a></td>
           <td><a href="{% url 'forge:task-detail' pk=task.pk %}" class="task-link">{{ task.get_priority_display }}</a></td>
           <td><a href="{% url 'forge:task-detail' pk=task.pk %}" class="task-link">{{ task.workers.all|length }}</a></td>
-          <td><a href="{% url 'forge:task-detail' pk=task.pk %}" class="task-link">{{ task.is_completed }}</a></td>
         </tr>
         {% endfor %}
       </tbody>

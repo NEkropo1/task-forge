@@ -25,10 +25,10 @@ class UserManager(BaseUserManager):
         user.save(using=self._db)
         return user
 
-    def create_superuser(self, email: str, password: str, **kwargs):
+    def create_superuser(self, email: str, password: str, **extra_fields):
         extra_fields.setdefault("is_staff", True)
         extra_fields.setdefault("is_superuser", True)
-        return self.create_user(email, password, **kwargs)
+        return self.create_user(email, password, **extra_fields)
 
 
 class TaskType(models.Model):
@@ -55,7 +55,18 @@ class Task(models.Model):
     workers = models.ManyToManyField(
         "Worker", related_name="tasks", through="TaskAssignment"
     )
-    tag = models.ForeignKey(TaskType, on_delete=models.CASCADE, related_name="tasks")
+    tag = models.ForeignKey(
+        TaskType,
+        on_delete=models.CASCADE,
+        related_name="tasks",
+    )
+    project = models.ForeignKey(
+        "Project",
+        on_delete=models.CASCADE,
+        related_name="tasks",
+        null=True,
+        blank=True,
+    )
 
     class Meta:
         ordering = ["priority"]
@@ -69,12 +80,6 @@ class TaskAssignment(models.Model):
     assigned_date = models.DateField(auto_now_add=True)
     assignee = models.ForeignKey(
         "Worker",
-        on_delete=models.CASCADE,
-    )
-    project = models.ForeignKey(
-        "Project",
-        blank=True,
-        null=True,
         on_delete=models.CASCADE,
     )
 
@@ -146,7 +151,7 @@ class Team(models.Model):
     def __str__(self) -> str:
         return self.name
 
-    def clean(self) -> str:
+    def clean(self) -> None:
         if self.project_manager.position.name != "ProjectManager":
             raise ValidationError("Manager must have position of ProjectManager.")
         super().clean()

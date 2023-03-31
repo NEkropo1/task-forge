@@ -5,9 +5,11 @@
   {% if request.user.position %}
       <h2>Projects
         {% if request.user.position.name == "ProjectManager" and worker.position == request.user.position %}
-          <a href="{% url 'forge:project-create' %}" class="btn btn-primary link-to-page">
+           <a href="{% url 'forge:project-create' %}" class="btn btn-primary link-to-page">
+              Create Project
+           </a>
         {% endif %}
-            Create Project</a>
+
       </h2>
       {% for project in request.user.projects.all %}
         <a href="{% url 'forge:project-detail' project.pk %}">
@@ -17,12 +19,13 @@
     <h2>Teams
       {% if request.user.position.name == "ProjectManager" and worker.position == request.user.position %}
         <a href="{% url 'forge:team-create' %}" class="btn btn-primary link-to-page">
-          {% endif %}
           Create Team
+          {% endif %}
         </a>
     </h2>
     {% for team in request.user.teams.all %}
       <a href="{% url 'forge:team-detail' team.pk %}">{{ team.name }}</a><br>
+
 
     {% endfor %}
   {% endif %}

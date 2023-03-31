@@ -1,7 +1,12 @@
 {% extends "base.html" %}
 
 {% block content %}
-  <h1>{{ project.name }}</h1>
+  <h1>
+    {{ project.name }}
+      {% if request.user.position.name == "ProjectManager" or request.user in project.team.members.all %}
+          <a href="{% url 'forge:project-task-create' %}" class="btn btn-primary link-to-page"  >Create task</a>
+      {% endif %}
+  </h1>
   <p>Manager: {{ project.manager }}</p>
   <p>Description: {{ project.description }}</p>
   <p>Start Date: {{ project.start_date }}</p>
@@ -10,20 +15,15 @@
   <h2>Tasks:</h2>
   <ul>
     {% for task in project.tasks.all %}
-      <li>{{ task.name }}</li>
-      <h2>
+      <li>{{ task.title }}</li>
       {% if request.user.position.name == "ProjectManager" or request.user in project.team.members.all %}
-          <a href="{% url 'forge:project-task-create' %}" class="btn btn-primary link-to-page"  >Create task</a>
+          <a href="{% url 'forge:task-detail' task.id %}" class="btn btn-primary link-to-page"  >Details</a>
       {% endif %}
-      </h2>
-    {% empty %}
-      <li>No tasks right now.</li>
-      <h2>
-      {% if request.user.position.name == "ProjectManager" or request.user in project.team.members.all %}
-          <a href="{% url 'forge:project-task-create' %}" class="btn btn-primary link-to-page"  >Create task</a>
-      {% endif %}
-      </h2>
-    {% endfor %}
 
+    {% empty %}
+      No tasks right now.
+    {% endfor %}
   </ul>
+
+
 {% endblock %}

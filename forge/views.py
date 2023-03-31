@@ -86,7 +86,7 @@ class TaskListView(LoginRequiredMixin, generic.ListView):
     paginate_by = 7
 
     def get_queryset(self):
-        queryset = Task.objects.prefetch_related("workers")
+        queryset = Task.objects.prefetch_related("workers").filter(is_completed=False)
         name = self.request.GET.get("name")
         if name:
             return queryset.filter(title__icontains=name)
@@ -174,6 +174,7 @@ class ProjectCreateView(LoginRequiredMixin, generic.CreateView):
     model = Project
     form_class = ProjectCreateForm
     template_name = "forge/project_form.html"
+    success_url = reverse_lazy("forge:project-list")
 
 
 class ProjectDetailView(LoginRequiredMixin, generic.DetailView):
@@ -185,6 +186,5 @@ class ProjectListView(LoginRequiredMixin, generic.ListView):
     model = Project
 
     def get_queryset(self) -> None:
-        query = super().get_queryset().filter(id=self.request.user.id)
-        print(query)
+        query = super().get_queryset().filter(manager=self.request.user)
         return query

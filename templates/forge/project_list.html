@@ -3,7 +3,7 @@
 {% block personal %}
   <ul>
     {% for project in project_list %}
-      <li><a href="{% url 'forge:project-detail' pk=project.id %}">{{ project.name }}</a> {{ project.is_completed }}</li>
+      <li><a href="{% url 'forge:project-detail' pk=project.id %}">{{ project.name }}</a> Completed: {{ project.is_completed }}</li>
     
     {% endfor %}
   </ul>
