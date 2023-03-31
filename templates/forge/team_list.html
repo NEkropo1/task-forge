@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block personal %}
+  {% if user.position.name == "ProjectManager" %}
+  <ul style="padding-top: 35px">
+    {% for team in teams %}
+      <a href="{% url 'forge:team-detail' team.pk %}">{{ team.name }}</a><br>
+
+    {% endfor %}
+  </ul>
+  
+  {% endif %}
+
+{% endblock %}
+
+

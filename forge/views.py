@@ -94,7 +94,11 @@ class TaskListView(LoginRequiredMixin, generic.ListView):
     paginate_by = 7
 
     def get_queryset(self):
-        queryset = Task.objects.prefetch_related("workers").filter(is_completed=False)
+        queryset = Task.objects.prefetch_related(
+            "project", "workers"
+        ).filter(
+            project__is_completed=False
+        )
         name = self.request.GET.get("name")
         if name:
             return queryset.filter(title__icontains=name)
@@ -104,6 +108,11 @@ class TaskListView(LoginRequiredMixin, generic.ListView):
         context = super().get_context_data()
         context["search_form"] = TaskSearchForm()
         return context
+
+
+class TaskDetailView(LoginRequiredMixin, generic.DetailView):
+    model = Task
+    queryset = Task.objects.prefetch_related("workers__teams")
 
 
 class WorkerListView(LoginRequiredMixin, generic.ListView):
@@ -126,11 +135,6 @@ class WorkerListView(LoginRequiredMixin, generic.ListView):
             "name": name
         })
         return context
-
-
-class TaskDetailView(LoginRequiredMixin, generic.DetailView):
-    model = Task
-    queryset = Task.objects.prefetch_related("workers__teams")
 
 
 class WorkerDetailView(LoginRequiredMixin, generic.DetailView):
@@ -170,6 +174,13 @@ class WorkerHireView(LoginRequiredMixin, generic.UpdateView):
 class TeamCreateView(LoginRequiredMixin, generic.CreateView):
     model = Team
     form_class = TeamForm
+    success_url = reverse_lazy("forge:team-list")
+
+
+class TeamListView(LoginRequiredMixin, generic.ListView):
+    model = Team
+    queryset = Team.objects.prefetch_related("members")
+    context_object_name = "teams"
 
 
 class TeamDetailView(LoginRequiredMixin, generic.DetailView):

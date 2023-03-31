@@ -7,7 +7,13 @@
     <p>{{ task.description }}</p>
     <p>Deadline: {{ task.deadline }}</p>
     {% if task.is_completed %}
-      <p>This task has been completed.</p>
+      <h3>This task has been completed !</h3>
+      <ul><h4>by:</h4>
+        {% for worker in task.workers.all %}
+          <li> <a href="{{ worker.get_absolute_url }}">{{ worker }}</a></li>
+        {% endfor %}
+
+      </ul>
     {% else %}
       <form method="post" action="{% url 'forge:complete-task' task.id %}">
         {% csrf_token %}

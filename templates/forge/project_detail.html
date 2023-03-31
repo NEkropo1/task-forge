@@ -3,13 +3,14 @@
 {% block content %}
   <h1>
     {{ project.name }}
+  </h1>
+
       {% if request.user.position.name == "ProjectManager" and not project.is_completed %}
-        <form method="post" action="{% url 'forge:complete-project' project.id %}">
+        <form method="post" action="{% url 'forge:complete-project' project.id %} ">
           {% csrf_token %}
           <button type="submit" class="btn-primary page-link" onclick="return confirm('Are you sure you want to mark this task as completed?')">Mark as completed</button>
         </form>
       {% endif %}
-  </h1>
   <p>Manager: {{ project.manager }} <a href="{{ project.manager.get_absolute_url }}">{{ project.manager.username }}</a>
   <p>Description: {{ project.description }}</p>
   <p>Start Date: {{ project.start_date }}</p>

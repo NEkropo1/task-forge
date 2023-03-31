@@ -3,8 +3,9 @@
 
 {% block personal %}
   {% if request.user.position %}
-      <h2>Projects
+      <h2>
         {% if request.user.position.name == "ProjectManager" and worker.position == request.user.position %}
+          Projects
            <a href="{% url 'forge:project-create' %}" class="btn btn-primary link-to-page">
               Create Project
            </a>
@@ -16,8 +17,9 @@
           <p>{{ project.name }} by {{ project.manager.first_name }}</p>
         </a>
       {% endfor %}
-    <h2>Teams
+    <h2>
       {% if request.user.position.name == "ProjectManager" and worker.position == request.user.position %}
+        Teams
         <a href="{% url 'forge:team-create' %}" class="btn btn-primary link-to-page">
           Create Team
           {% endif %}

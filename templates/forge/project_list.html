@@ -1,9 +1,10 @@
 {% extends "base.html" %}
 
 {% block personal %}
-  <ul>
+  <ul style="padding-top: 35px">
     {% for project in project_list %}
-      <li><a href="{% url 'forge:project-detail' pk=project.id %}">{{ project.name }}</a> Completed: {{ project.is_completed }}</li>
+      <a href="{% url 'forge:project-detail' pk=project.id %}">{{ project.name }}</a> Completed: {{ project.is_completed }}
+      <br>
     
     {% endfor %}
   </ul>
