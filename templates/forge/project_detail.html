@@ -3,11 +3,14 @@
 {% block content %}
   <h1>
     {{ project.name }}
-      {% if request.user.position.name == "ProjectManager" or request.user in project.team.members.all %}
-          <a href="{% url 'forge:project-task-create' %}" class="btn btn-primary link-to-page"  >Create task</a>
+      {% if request.user.position.name == "ProjectManager" and not project.is_completed %}
+        <form method="post" action="{% url 'forge:complete-project' project.id %}">
+          {% csrf_token %}
+          <button type="submit" class="btn-primary page-link" onclick="return confirm('Are you sure you want to mark this task as completed?')">Mark as completed</button>
+        </form>
       {% endif %}
   </h1>
-  <p>Manager: {{ project.manager }}</p>
+  <p>Manager: {{ project.manager }} <a href="{{ project.manager.get_absolute_url }}">{{ project.manager.username }}</a>
   <p>Description: {{ project.description }}</p>
   <p>Start Date: {{ project.start_date }}</p>
   <p>Submit Date: {{ project.deadline }}</p>

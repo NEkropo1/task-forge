@@ -53,6 +53,14 @@ def complete_task(request, pk):
     return redirect("forge:task-detail", pk=pk)
 
 
+@require_POST
+def complete_project(request, pk):
+    project = get_object_or_404(Project, pk=pk)
+    project.is_completed = True
+    project.save()
+    return redirect("forge:project-detail", pk=pk)
+
+
 class WorkerRegistrationView(generic.CreateView):
     FIELDS_TO_POP = ["hire_date", "position", "status", "team"]
     model = get_user_model()
