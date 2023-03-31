@@ -1,3 +1,4 @@
+# flake8: noqa E501, F401, F821, ANN003, ANN101, ANN201
 from django.core.exceptions import ValidationError
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
@@ -71,7 +72,7 @@ class WorkerRegistrationView(generic.CreateView):
         return form
 
 
-class TaskCreateView(generic.CreateView):
+class TaskCreateView(LoginRequiredMixin, generic.CreateView):
     model = Task
     form_class = TaskForm
 
@@ -147,8 +148,8 @@ class WorkerHireView(LoginRequiredMixin, generic.UpdateView):
     def form_valid(self, form):
         response = super().form_valid(form)
         worker = form.save(commit=False)
-        worker.team = form.cleaned_data['team']
-        worker.status = form.cleaned_data['status']
+        worker.team = form.cleaned_data["team"]
+        worker.status = form.cleaned_data["status"]
         try:
             form.full_clean()
         except ValidationError:

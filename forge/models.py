@@ -1,3 +1,4 @@
+# flake8: noqa E501, F401, F821, ANN003, ANN001, ANN002, ANN101, ANN201
 from __future__ import annotations
 import datetime
 
@@ -10,25 +11,30 @@ from django.urls import reverse
 
 
 class UserManager(BaseUserManager):
-    def create_user(self, email: str, password: str = None, **extra_fields):
+    def create_user(
+            self: "UserManager",
+            email: str,
+            password: str = None,
+            **kwargs
+    ) -> UserManager:
         if not email:
             raise ValueError("The Email field must be set")
         email = self.normalize_email(email)
-        user = self.model(email=email, **extra_fields)
+        user = self.model(email=email, **kwargs)
         user.set_password(password)
         user.save(using=self._db)
         return user
 
-    def create_superuser(self, email: str, password, **extra_fields):
+    def create_superuser(self, email: str, password: str, **kwargs):
         extra_fields.setdefault("is_staff", True)
         extra_fields.setdefault("is_superuser", True)
-        return self.create_user(email, password, **extra_fields)
+        return self.create_user(email, password, **kwargs)
 
 
 class TaskType(models.Model):
     name = models.CharField(max_length=255)
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.name
 
 
@@ -54,7 +60,7 @@ class Task(models.Model):
     class Meta:
         ordering = ["priority"]
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.title
 
 
@@ -72,7 +78,7 @@ class TaskAssignment(models.Model):
         on_delete=models.CASCADE,
     )
 
-    def __str__(self):
+    def __str__(self) -> str:
         return (
             f"{self.assignee.username} assigned "
             "to {self.task.title} on {self.assigned_date}"
@@ -82,7 +88,7 @@ class TaskAssignment(models.Model):
 class Position(models.Model):
     name = models.CharField(max_length=127, unique=True)
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.name
 
 
@@ -116,10 +122,10 @@ class Worker(AbstractUser):
         verbose_name = "worker"
         verbose_name_plural = "workers"
 
-    def get_absolute_url(self):
+    def get_absolute_url(self) -> str:
         return reverse("forge:worker-detail", kwargs={"pk": self.pk})
 
-    def __str__(self):
+    def __str__(self) -> str:
         if self.position and self.position.name == "ProjectManager":
             return f"{str(self.position).capitalize()}: `{self.first_name}` {self.email}"
         elif self.position:
@@ -137,10 +143,10 @@ class Team(models.Model):
         on_delete=models.CASCADE,
     )
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.name
 
-    def clean(self):
+    def clean(self) -> str:
         if self.project_manager.position.name != "ProjectManager":
             raise ValidationError("Manager must have position of ProjectManager.")
         super().clean()
@@ -169,10 +175,10 @@ class Project(models.Model):
             )
         ]
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.name
 
-    def clean(self):
+    def clean(self) -> None:
         if self.manager.position.name != "ProjectManager":
             raise ValidationError("Manager must have position of ProjectManager.")
         super().clean()

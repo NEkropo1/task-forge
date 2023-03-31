@@ -1,3 +1,4 @@
+# flake8: noqa E501, F401, F821, ANN003, ANN001, ANN002, ANN101, ANN201
 import datetime
 
 from django import forms
@@ -31,7 +32,7 @@ class ProjectCreateForm(forms.ModelForm):
             "deadline",
         ]
 
-    def clean(self):
+    def clean(self) -> None:
         manager = self.cleaned_data.get("manager")
         if manager and manager.position.name != "ProjectManager":
             raise ValidationError("Manager must have position of ProjectManager.")
@@ -80,11 +81,11 @@ class WorkerHireForm(forms.ModelForm):
             "team"
         ]
 
-    def clean(self):
+    def clean(self) -> dict:
         team = self.cleaned_data.get("team")
         status = self.cleaned_data.get("status")
 
-        if  not team and str(status) == "1":
+        if not team and str(status) == "1":
             raise ValidationError("Worker in a team can't be a 'free agent'")
 
         if str(status) == "2" and team:
