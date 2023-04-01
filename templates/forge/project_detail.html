@@ -19,10 +19,12 @@
   <h2>Tasks:</h2>
   <ul>
     {% for task in project.tasks.all %}
-      <li>{{ task.title }}</li>
-      {% if request.user.position.name == "ProjectManager" or request.user in project.team.members.all %}
-          <a href="{% url 'forge:task-detail' task.id %}" class="btn btn-primary link-to-page"  >Details</a>
-      {% endif %}
+      <li>
+        {{ task.title }}{% if request.user.position.name == "ProjectManager" or request.user in project.team.members.all %}
+          <a href="{% url 'forge:task-detail' task.id %}" class="button link-to-page"  >Details</a>
+        {% endif %}
+      </li>
+
 
     {% empty %}
       No tasks right now.

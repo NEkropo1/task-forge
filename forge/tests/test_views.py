@@ -20,20 +20,15 @@ class WelcomeViewTest(TestCase):
     def setUp(self) -> None:
         self.client = Client()
         self.user = get_user_model().objects.create_user(
-            username="testuser",
-            password="testpass12345"
+            username="testuser", password="testpass12345"
         )
 
-    def test_welcome_view_redirects_to_index_if_authenticated(
-            self
-    ) -> None:
+    def test_welcome_view_redirects_to_index_if_authenticated(self) -> None:
         self.client.force_login(self.user)
         response = self.client.get(reverse("forge:welcome"))
         self.assertRedirects(response, reverse("forge:index"))
 
-    def test_welcome_view_renders_correct_template_if_not_authenticated(
-            self
-    ) -> None:
+    def test_welcome_view_renders_correct_template_if_not_authenticated(self) -> None:
         response = self.client.get(reverse("forge:index"))
         self.assertRedirects(response, reverse("forge:welcome") + "?next=%2F")
 
@@ -42,12 +37,11 @@ class TestTeamViews(TestCase):
     def setUp(self) -> None:
         self.client = Client()
         self.user = get_user_model().objects.create_user(
-            username="testuser",
-            password="testpass12345")
+            username="testuser", password="testpass12345"
+        )
         self.position = Position.objects.create(name="ProjectManager")
         self.worker = get_user_model().objects.create(
-            email="pm@test.com",
-            position=self.position
+            email="pm@test.com", position=self.position
         )
         self.team = Team.objects.create(name="Test Team", project_manager=self.worker)
 
@@ -64,18 +58,23 @@ class TestTeamViews(TestCase):
 class WorkerHireViewTestCase(TestCase):
     def setUp(self) -> None:
         self.user = get_user_model().objects.create_user(
-            username="testuser",
-            password="testpass"
+            username="testuser", password="testpass"
         )
         self.position = Position.objects.create(name="Developer")
         self.team_manager = Worker.objects.create(
-            username="manager1", email="manager1@example.com",
-            password="testpass", position=self.position, status=Worker.FREE_AGENT
+            username="manager1",
+            email="manager1@example.com",
+            password="testpass",
+            position=self.position,
+            status=Worker.FREE_AGENT,
         )
         self.team = Team.objects.create(name="Team A", project_manager=self.team_manager)
         self.worker = Worker.objects.create(
-            username="worker1", email="worker1@example.com",
-            password="testpass", position=self.position, status=Worker.FREE_AGENT
+            username="worker1",
+            email="worker1@example.com",
+            password="testpass",
+            position=self.position,
+            status=Worker.FREE_AGENT,
         )
 
     def test_form_valid(self) -> None:
@@ -91,10 +90,9 @@ class WorkerHireViewTestCase(TestCase):
         }
         response = self.client.post(url, data=data)
         self.assertEqual(response.status_code, 302)
-        self.assertRedirects(response, reverse(
-            "forge:worker-detail",
-            kwargs={"pk": self.worker.pk}
-        ))
+        self.assertRedirects(
+            response, reverse("forge:worker-detail", kwargs={"pk": self.worker.pk})
+        )
         worker = Worker.objects.get(pk=self.worker.pk)
         self.assertEqual(worker.email, data["email"])
         self.assertEqual(worker.salary, data["salary"])
@@ -118,7 +116,4 @@ class WorkerHireViewTestCase(TestCase):
         self.assertEqual(response.status_code, 200)
         form = response.context["form"]
         self.assertFalse(form.is_valid())
-        self.assertEqual(
-            form.errors,
-            {"salary": ["Enter a whole number."]}
-        )
+        self.assertEqual(form.errors, {"salary": ["Enter a whole number."]})

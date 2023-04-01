@@ -4,7 +4,7 @@
 {% block personal %}
   {% if request.user.position %}
       <h2>
-        {% if request.user.position.name == "ProjectManager" and worker.position == request.user.position %}
+        {% if request.user.position.name == "ProjectManager" %}
           Projects
            <a href="{% url 'forge:project-create' %}" class="btn btn-primary link-to-page">
               Create Project
@@ -12,7 +12,7 @@
         {% endif %}
 
       </h2>
-      {% for project in request.user.projects.all %}
+      {% for project in worker.projects.all %}
         <a href="{% url 'forge:project-detail' project.pk %}">
           <p>{{ project.name }} by {{ project.manager.first_name }}</p>
         </a>
@@ -25,7 +25,7 @@
           {% endif %}
         </a>
     </h2>
-    {% for team in request.user.teams.all %}
+    {% for team in worker.teams.all %}
       <a href="{% url 'forge:team-detail' team.pk %}">{{ team.name }}</a><br>
 
 

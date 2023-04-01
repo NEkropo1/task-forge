@@ -13,9 +13,9 @@
   <li class="list-group-item list-group-item-custom"><a href="{% url 'forge:index' %}">Home</a></li>
   <li class="list-group-item list-group-item-custom"><a href="{% url 'forge:task-list' %}">Tasks</a></li>
 
-  {% if user.is_authenticated and user.position.name == "ProjectManager"%}
   <li class="list-group-item list-group-item-custom"><a href="{% url 'forge:project-list' %}">Projects</a></li>
   <li class="list-group-item list-group-item-custom"><a href="{% url 'forge:team-list' %}">Teams</a></li>
+  {% if user.is_authenticated and user.position.name == "ProjectManager"%}
   <li class="list-group-item list-group-item-custom"><a href="{% url 'forge:worker-list' %}">Workers</a></li>
   {% endif %}
 

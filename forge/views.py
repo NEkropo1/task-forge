@@ -1,52 +1,72 @@
-# flake8: noqa E501, F401, F821, ANN003, ANN101, ANN201
+from typing import Tuple, Any
+
 from django.core.exceptions import ValidationError
 from django.contrib.auth import get_user_model
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.http import HttpResponseRedirect
+from django.db.models import QuerySet, Sum, F
+from django.http import HttpResponseRedirect, HttpRequest, HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy
+from django.utils.decorators import method_decorator
 from django.views.decorators.http import require_POST
 from django.views import generic
 
 from forge.forms import (
-    WorkerRegisterForm,
-    TeamForm,
     ProjectCreateForm,
     TaskForm,
     TaskSearchForm,
+    TeamForm,
     WorkerSearchForm,
-    WorkerHireForm
+    WorkerRegisterForm,
+    WorkerHireForm,
 )
 from forge.models import Worker, Task, Team, Project
 
 
 # Create your views here.
-def welcome(request):
+def user_is_manager_or_admin(user: Any) -> bool | Any:
+    return user.is_authenticated and (
+        user.position == "ProjectManager" or user.is_superuser
+    )
+
+
+def welcome(request: HttpRequest) -> HttpResponse:
     if request.user.is_authenticated:
         return HttpResponseRedirect(reverse_lazy("forge:index"))
     return render(request, "forge/unregistered/welcome.html")
 
 
 @login_required
-def index(request):
+def index(request: HttpRequest) -> HttpResponse:
     """View function for the home page of the site."""
+    worker_query = Worker.objects.all()
+    tasks_query = Task.objects.all()
 
-    num_workers = Worker.objects.count()
+    num_users = worker_query.count()
+    num_workers = worker_query.filter(status__gt=0).count()
+    tasks_overall = tasks_query.count()
+    tasks_done = tasks_query.filter(is_completed=True).count()
 
-    num_visits = request.session.get("num_visits", 0)
-    request.session["num_visits"] = num_visits + 1
+    teams = Team.objects.prefetch_related("members__tasks")
+
+    max_tasks_done, best_team = get_max_tasks_done(teams)
 
     context = {
+        "num_users": num_users,
         "num_workers": num_workers,
-        "num_visits": num_visits,
+        "tasks_overall": tasks_overall,
+        "tasks_done": tasks_done,
+        "teams": teams.count(),
+        "best_team": best_team,
+        "max_tasks_done": max_tasks_done,
     }
 
     return render(request, "forge/index.html", context=context)
 
 
 @require_POST
-def complete_task(request, pk):
+def complete_task(request: HttpRequest, pk: int) -> HttpResponse:
     task = get_object_or_404(Task, pk=pk)
     task.is_completed = True
     task.save()
@@ -54,7 +74,7 @@ def complete_task(request, pk):
 
 
 @require_POST
-def complete_project(request, pk):
+def complete_project(request: HttpRequest, pk: int) -> HttpResponse:
     project = get_object_or_404(Project, pk=pk)
     project.is_completed = True
     project.save()
@@ -68,12 +88,12 @@ class WorkerRegistrationView(generic.CreateView):
     template_name = "registration/signup.html"
     success_url = reverse_lazy("login")
 
-    def dispatch(self, request, *args, **kwargs):
+    def dispatch(self, request: HttpRequest, *args, **kwargs) -> Any:
         if request.user.is_authenticated:
             return redirect("forge:task-list")  # refactor this after everything provided
         return super().dispatch(request, *args, **kwargs)
 
-    def get_form(self, form_class=None):
+    def get_form(self, form_class: Any = None) -> Any:
         form = super().get_form(form_class)
         for field in self.FIELDS_TO_POP:
             form.fields.pop(field)
@@ -84,7 +104,7 @@ class TaskCreateView(LoginRequiredMixin, generic.CreateView):
     model = Task
     form_class = TaskForm
 
-    def get_success_url(self):
+    def get_success_url(self) -> str:
         return reverse_lazy("forge:task-list")
 
 
@@ -93,10 +113,8 @@ class TaskListView(LoginRequiredMixin, generic.ListView):
     context_object_name = "tasks"
     paginate_by = 7
 
-    def get_queryset(self):
-        queryset = Task.objects.prefetch_related(
-            "project", "workers"
-        ).filter(
+    def get_queryset(self) -> QuerySet:
+        queryset = Task.objects.prefetch_related("project", "workers").filter(
             project__is_completed=False
         )
         name = self.request.GET.get("name")
@@ -104,7 +122,7 @@ class TaskListView(LoginRequiredMixin, generic.ListView):
             return queryset.filter(title__icontains=name)
         return queryset
 
-    def get_context_data(self, *, object_list=None, **kwargs):
+    def get_context_data(self, *, object_list=None, **kwargs) -> dict[str, Any]:
         context = super().get_context_data()
         context["search_form"] = TaskSearchForm()
         return context
@@ -120,20 +138,20 @@ class WorkerListView(LoginRequiredMixin, generic.ListView):
     context_object_name = "workers"
     paginate_by = 10
 
-    def get_queryset(self):
+    def get_queryset(self) -> QuerySet:
         queryset = get_user_model().objects.select_related("position")
         name = self.request.GET.get("name")
         if name:
             return queryset.filter(first_name__icontains=name)
         return queryset
 
-    def get_context_data(self, *, object_list=None, **kwargs):
+    def get_context_data(
+        self, *, object_list: QuerySet = None, **kwargs
+    ) -> dict[str, Any]:
         context = super().get_context_data()
         name = self.request.GET.get("name", "")
 
-        context["search_form"] = WorkerSearchForm(initial={
-            "name": name
-        })
+        context["search_form"] = WorkerSearchForm(initial={"name": name})
         return context
 
 
@@ -141,7 +159,7 @@ class WorkerDetailView(LoginRequiredMixin, generic.DetailView):
     model = get_user_model()
     queryset = get_user_model().objects.select_related("team", "position")
 
-    def get_context_data(self, **kwargs):
+    def get_context_data(self, **kwargs) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
         worker = self.get_object()
         if worker.position and worker.position.name == "ProjectManager":
@@ -149,15 +167,23 @@ class WorkerDetailView(LoginRequiredMixin, generic.DetailView):
         return context
 
 
+@method_decorator(user_passes_test(
+    lambda user: user.is_authenticated and (
+        user.position == "ProjectManager" or user.is_superuser
+    )
+), name="dispatch")
 class WorkerHireView(LoginRequiredMixin, generic.UpdateView):
     queryset = Worker.objects.all()
     form_class = WorkerHireForm
     template_name = "forge/worker_hire.html"
 
-    def get_success_url(self):
+    def dispatch(self, request, *args, **kwargs):
+        return super().dispatch(request, *args, **kwargs)
+
+    def get_success_url(self) -> str:
         return reverse_lazy("forge:worker-detail", kwargs={"pk": self.kwargs["pk"]})
 
-    def form_valid(self, form):
+    def form_valid(self, form: Any) -> HttpResponse:
         response = super().form_valid(form)
         worker = form.save(commit=False)
         worker.team = form.cleaned_data["team"]
@@ -171,10 +197,17 @@ class WorkerHireView(LoginRequiredMixin, generic.UpdateView):
             return response
 
 
+@method_decorator(user_passes_test(
+    user_is_manager_or_admin,
+    login_url="login",
+), name="dispatch")
 class TeamCreateView(LoginRequiredMixin, generic.CreateView):
     model = Team
     form_class = TeamForm
     success_url = reverse_lazy("forge:team-list")
+
+    def dispatch(self, request, *args, **kwargs):
+        return super().dispatch(request, *args, **kwargs)
 
 
 class TeamListView(LoginRequiredMixin, generic.ListView):
@@ -189,7 +222,13 @@ class TeamDetailView(LoginRequiredMixin, generic.DetailView):
     context_object_name = "team"
 
 
-class ProjectCreateView(LoginRequiredMixin, generic.CreateView):
+@method_decorator(user_passes_test(
+    lambda user: user.is_authenticated and (
+        user.position == "ProjectManager" or user.is_superuser
+    ),
+    login_url="login",
+), name="dispatch")
+class ProjectCreateView(generic.CreateView):
     model = Project
     form_class = ProjectCreateForm
     template_name = "forge/project_form.html"
@@ -204,6 +243,22 @@ class ProjectDetailView(LoginRequiredMixin, generic.DetailView):
 class ProjectListView(LoginRequiredMixin, generic.ListView):
     model = Project
 
-    def get_queryset(self) -> None:
+    def get_queryset(self) -> QuerySet:
         query = super().get_queryset().filter(manager=self.request.user)
         return query
+
+
+def get_max_tasks_done(teams: QuerySet) -> Tuple[int, str] | Tuple[int, None]:
+    team_totals = (
+        teams.annotate(
+            total_tasks_done=Sum("members__tasks__is_completed"), team_name=F("name")
+        )
+        .values("total_tasks_done", "team_name")
+        .order_by("-total_tasks_done", "team_name")
+    )
+
+    if not team_totals:
+        return 0, None
+
+    best_team = team_totals.first()
+    return best_team["total_tasks_done"], best_team["team_name"]

@@ -38,7 +38,6 @@ urlpatterns = [
     path("project/<int:pk>/complete", complete_project, name="complete-project"),
     path("project/task/create/", TaskCreateView.as_view(), name="project-task-create"),
     path("projects/", ProjectListView.as_view(), name="project-list"),
-
 ]
 
 app_name = "forge"

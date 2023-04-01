@@ -1,15 +1,32 @@
 {% extends "base.html" %}
 
 {% block content %}
-  <h2>Welcome to forge!</h2>
-  <a href="{% url 'forge:index' %}">site visited</a> {{ num_visits }} times
-
-    <p>
-      I know it's pretty empty here, but we will change it
-      in a while,
-    </p>
-    <p>
-    In a meantime: total number of workers on our projects are: {{ num_workers }}
-    </p>
-
+  <div class="container-fluid">
+    <div class="row justify-content-center align-items-center h-100">
+      <div class="col-lg-6 col-md-8 col-sm-12">
+        <h1>Welcome to Forge!</h1>
+        <div class="container">
+          <div class="row">
+            <div class="col-lg-4 col-md-4 col-sm-12 mb-4">
+              <p>Already registered users: {{ num_users }}</p>
+              <p>While hired from them: {{ num_workers }}</p>
+            </div>
+            <div class="col-lg-4 col-md-4 col-sm-12 mb-4">
+              <p>Overall task created on our project: {{ tasks_overall }}</p>
+              <p>While already completed: {{ tasks_done }}</p>
+            </div>
+            <div class="col-lg-4 col-md-4 col-sm-12 mb-4">
+              <p>We have more than one team <span class="jokes-team">*jokes*</span> : {{ teams }}</p>
+            </div>
+          </div>
+          <div class="row justify-content-center align-items-center">
+              <p>Our best team: <span id="rainbow-color">{{ best_team }}</span></p>
+          </div>
+          <div class="row justify-content-center align-items-center">
+              <p>With {{ max_tasks_done }} tasks completed. Congratulations!</p>
+          </div>
+         </div>
+      </div>
+    </div>
+  </div>
 {% endblock %}

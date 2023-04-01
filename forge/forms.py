@@ -1,4 +1,3 @@
-# flake8: noqa E501, F401, F821, ANN003, ANN001, ANN002, ANN101, ANN201
 import datetime
 
 from django import forms
@@ -14,12 +13,12 @@ class ProjectCreateForm(forms.ModelForm):
     description = forms.CharField(widget=forms.Textarea(attrs={"rows": 3}))
     manager = forms.ModelChoiceField(
         queryset=Worker.objects.filter(position__name="ProjectManager"),
-        widget=forms.Select(attrs={"class": "form-select"})
+        widget=forms.Select(attrs={"class": "form-select"}),
     )
     start_date = forms.DateField(widget=forms.DateInput(attrs={"type": "date"}))
     deadline = forms.DateField(
         widget=forms.DateInput(attrs={"type": "date"}),
-        validators=[MinValueValidator(limit_value=datetime.date.today)]
+        validators=[MinValueValidator(limit_value=datetime.date.today)],
     )
 
     class Meta:
@@ -41,17 +40,13 @@ class ProjectCreateForm(forms.ModelForm):
 
 
 class WorkerHireForm(forms.ModelForm):
-    email = forms.EmailField(
-        widget=forms.TextInput(attrs={"placeholder": "E-mail"})
-    )
+    email = forms.EmailField(widget=forms.TextInput(attrs={"placeholder": "E-mail"}))
 
     salary = forms.IntegerField(
         widget=forms.NumberInput(attrs={"placeholder": "Wanted salary"})
     )
 
-    hire_date = forms.DateField(
-        widget=forms.DateInput(attrs={"type": "date"})
-    )
+    hire_date = forms.DateField(widget=forms.DateInput(attrs={"type": "date"}))
 
     position = forms.ModelChoiceField(
         queryset=Position.objects.all(),
@@ -61,25 +56,18 @@ class WorkerHireForm(forms.ModelForm):
     status = forms.ChoiceField(
         choices=Worker.STATUS_CHOICES[1:],
         widget=forms.RadioSelect(attrs={"class": "form-check-input"}),
-        required=False
+        required=False,
     )
 
     team = forms.ModelChoiceField(
         queryset=Team.objects.all(),
         widget=forms.Select(attrs={"class": "form-select"}),
-        required=False
+        required=False,
     )
 
     class Meta:
         model = Worker
-        fields = [
-            "email",
-            "salary",
-            "hire_date",
-            "position",
-            "status",
-            "team"
-        ]
+        fields = ["email", "salary", "hire_date", "position", "status", "team"]
 
     def clean(self) -> dict:
         team = self.cleaned_data.get("team")
@@ -89,16 +77,15 @@ class WorkerHireForm(forms.ModelForm):
             raise ValidationError("Worker in a team can't be a 'free agent'")
 
         if str(status) == "2" and team:
-            raise ValidationError("Worker cannot be a 'free agent' "
-                                  "if assigned to a team.")
+            raise ValidationError(
+                "Worker cannot be a 'free agent' " "if assigned to a team."
+            )
 
         return self.cleaned_data
 
 
 class WorkerRegisterForm(UserCreationForm):
-    email = forms.EmailField(
-        widget=forms.TextInput(attrs={"placeholder": "E-mail"})
-    )
+    email = forms.EmailField(widget=forms.TextInput(attrs={"placeholder": "E-mail"}))
 
     first_name = forms.TextInput()
 
@@ -109,29 +96,25 @@ class WorkerRegisterForm(UserCreationForm):
     )
 
     about = forms.CharField(
-        widget=forms.Textarea(attrs={
-            "placeholder": "Skills and anything about you",
-            "rows": "3"
-        })
+        widget=forms.Textarea(
+            attrs={"placeholder": "Skills and anything about you", "rows": "3"}
+        )
     )
 
-    hire_date = forms.DateField(
-        widget=forms.DateInput(attrs={"type": "date"})
-    )
+    hire_date = forms.DateField(widget=forms.DateInput(attrs={"type": "date"}))
 
     position = forms.ModelChoiceField(
         queryset=Position.objects.all(),
-        widget=forms.Select(attrs={"class": "form-select"})
+        widget=forms.Select(attrs={"class": "form-select"}),
     )
 
     status = forms.ChoiceField(
         choices=Worker.STATUS_CHOICES,
-        widget=forms.RadioSelect(attrs={"class": "form-check-input"})
+        widget=forms.RadioSelect(attrs={"class": "form-check-input"}),
     )
 
     team = forms.ModelChoiceField(
-        queryset=Team.objects.all(),
-        widget=forms.Select(attrs={"class": "form-select"})
+        queryset=Team.objects.all(), widget=forms.Select(attrs={"class": "form-select"})
     )
 
     class Meta:
@@ -148,7 +131,7 @@ class WorkerRegisterForm(UserCreationForm):
             "hire_date",
             "position",
             "status",
-            "team"
+            "team",
         ]
 
 
@@ -186,13 +169,11 @@ class TaskForm(forms.ModelForm):
     )
 
     tag = forms.ModelChoiceField(
-        queryset=TaskType.objects.all(),
-        empty_label=None,
-        label="Task Type"
+        queryset=TaskType.objects.all(), empty_label=None, label="Task Type"
     )
     deadline = forms.DateField(
         widget=forms.DateInput(attrs={"type": "date"}),
-        validators=[MinValueValidator(limit_value=datetime.date.today)]
+        validators=[MinValueValidator(limit_value=datetime.date.today)],
     )
 
     project = forms.ModelChoiceField(
@@ -223,20 +204,14 @@ class TeamForm(forms.ModelForm):
     )
 
     forms.ModelChoiceField(
-        queryset=Worker.objects.select_related(
-            "position"
-        ).filter(
+        queryset=Worker.objects.select_related("position").filter(
             position__name__icontains="ProjectManager"
         ),
         required=False,
         empty_label=None,
-        label="Project Manager"
+        label="Project Manager",
     )
 
     class Meta:
         model = Team
-        fields = [
-            "name",
-            "project_manager",
-            "members"
-        ]
+        fields = ["name", "project_manager", "members"]

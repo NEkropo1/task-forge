@@ -1,15 +1,20 @@
 {% extends "base.html" %}
 
 {% block personal %}
-  <ul style="padding-top: 35px">
-    {% for project in project_list %}
-      <a href="{% url 'forge:project-detail' pk=project.id %}">{{ project.name }}</a> Completed: {{ project.is_completed }}
-      <br>
-    
-    {% endfor %}
-  </ul>
-  
-  
+  <table class="table">
+    <thead>
+      <tr>
+        <th scope="col">Project Name</th>
+        <th scope="col">Completion Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for project in project_list %}
+        <tr>
+          <td><a href="{% url 'forge:project-detail' pk=project.id %}">{{ project.name }}</a></td>
+          <td>{% if project.is_completed %}&#x2713;{% else %}&#x2717;{% endif %}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
 {% endblock %}
-
-

@@ -1,4 +1,4 @@
-# flake8: noqa E501, F401, F821, ANN003, ANN001, ANN002, ANN101, ANN201
+# flake8: noqa ANN201
 from __future__ import annotations
 import datetime
 
@@ -12,10 +12,7 @@ from django.urls import reverse
 
 class UserManager(BaseUserManager):
     def create_user(
-            self: "UserManager",
-            email: str,
-            password: str = None,
-            **kwargs
+        self: "UserManager", email: str, password: str = None, **kwargs
     ) -> UserManager:
         if not email:
             raise ValueError("The Email field must be set")
@@ -120,7 +117,7 @@ class Worker(AbstractUser):
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
-        related_name="assignees"
+        related_name="assignees",
     )
 
     class Meta:
@@ -129,6 +126,9 @@ class Worker(AbstractUser):
 
     def get_absolute_url(self) -> str:
         return reverse("forge:worker-detail", kwargs={"pk": self.pk})
+
+    def count_tasks_done(self) -> int:
+        return Task.objects.filter(workers=self, is_completed=True).count()
 
     def __str__(self) -> str:
         if self.position and self.position.name == "ProjectManager":
@@ -161,9 +161,7 @@ class Project(models.Model):
     name = models.CharField(max_length=255)
     description = models.TextField()
     manager = models.ForeignKey(
-        Worker,
-        on_delete=models.CASCADE,
-        related_name="projects"
+        Worker, on_delete=models.CASCADE, related_name="projects"
     )
     is_completed = models.BooleanField(default=False)
     start_date = models.DateField(
@@ -176,7 +174,8 @@ class Project(models.Model):
     class Meta:
         constraints = [
             models.UniqueConstraint(
-                fields=["name", "manager"], name="unique_project_and_manager",
+                fields=["name", "manager"],
+                name="unique_project_and_manager",
             )
         ]
 

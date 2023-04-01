@@ -1,10 +1,16 @@
 body {
     margin-top: 20px;
+    margin-bottom: 20px;
     background-color: #34373b;
     color: #afafaf;
 }
 a {
     color: #1DA1F2;
+}
+
+.jokes-team {
+  font-style: italic;
+  color: rgba(154, 72, 4, 0.9); /* change color to your desired value */
 }
 
 ::selection {
@@ -69,7 +75,6 @@ input[type=text], textarea {
 
 .table td, .table th{
   color: #7c7676;
-  cursor: pointer;
 }
 
 .table td, .table th {
