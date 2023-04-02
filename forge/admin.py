@@ -21,7 +21,7 @@ class WorkerAdmin(UserAdmin):
              "salary", "about", "hire_date", "position", "status", "team"
          )}),
     )
-    add_fieldsets = UserAdmin.add_fieldsets + (
+    add_fieldsets = (
         (
             None,
             {
@@ -29,10 +29,24 @@ class WorkerAdmin(UserAdmin):
                 "fields": (
                     "username",
                     "email",
-                    "first_name",
-                    "last_name",
                     "password1",
                     "password2",
+                ),
+            },
+        ),
+        (
+            "Personal info",
+            {
+                "fields": (
+                    "first_name",
+                    "last_name",
+                ),
+            },
+        ),
+        (
+            "Additional info",
+            {
+                "fields": (
                     "salary",
                     "about",
                     "hire_date",
