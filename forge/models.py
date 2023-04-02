@@ -104,7 +104,7 @@ class Worker(AbstractUser):
         (FREE_AGENT, "Free agent"),
     )
 
-    email = models.EmailField(unique=True, blank=False, null=False)
+    email = models.EmailField(unique=True)
     salary = models.PositiveIntegerField(blank=True, null=True)  # Coins
     about = models.TextField(blank=True, null=True)
     hire_date = models.DateField(blank=True, null=True)

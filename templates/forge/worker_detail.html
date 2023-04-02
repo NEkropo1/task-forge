@@ -3,29 +3,31 @@
 
 {% block personal %}
   {% if request.user.position %}
+      {% if user.position.name == "ProjectManager" or user.is_superuser %}
+         <a href="{% url 'forge:project-create' %}" class="btn btn-primary link-to-page">
+            Create Project
+         </a>
+      {% endif %}
+    {% if user.projects.all %}
       <h2>
-        {% if request.user.position.name == "ProjectManager" %}
-          Projects
-           <a href="{% url 'forge:project-create' %}" class="btn btn-primary link-to-page">
-              Create Project
-           </a>
-        {% endif %}
-
+        Projects
       </h2>
-      {% for project in worker.projects.all %}
+      {% for project in user.projects.all %}
         <a href="{% url 'forge:project-detail' project.pk %}">
           <p>{{ project.name }} by {{ project.manager.first_name }}</p>
         </a>
       {% endfor %}
+    {% endif %}
+
     <h2>
-      {% if request.user.position.name == "ProjectManager" and worker.position == request.user.position %}
+      {% if user.position.name == "ProjectManager" or user.is_superuser %}
         Teams
         <a href="{% url 'forge:team-create' %}" class="btn btn-primary link-to-page">
           Create Team
           {% endif %}
         </a>
     </h2>
-    {% for team in worker.teams.all %}
+    {% for team in user.teams.all %}
       <a href="{% url 'forge:team-detail' team.pk %}">{{ team.name }}</a><br>
 
 

@@ -7,43 +7,37 @@ from forge.models import Worker, Position, TaskType, Project
 # Register your models here.
 @admin.register(Worker)
 class WorkerAdmin(UserAdmin):
-    list_display = UserAdmin.list_display + ("about",)
-    fieldsets = UserAdmin.fieldsets + (
-        (
-            (
-                "Additional info",
-                {
-                    "fields": (
-                        "salary",
-                        "about",
-                        "hire_date",
-                        "position",
-                        "status",
-                        "team",
-                    )
-                },
-            ),
-        )
+    list_display = UserAdmin.list_display + ("about", "email")
+    fieldsets = (
+        ("Personal info", {"fields": ("username", "email", "password")}),
+        ("Name", {"fields": ("first_name", "last_name")}),
+        ("Permissions", {"fields": ("is_active", "is_staff", "is_superuser", "groups", "user_permissions")}),
+        ("Important dates", {"fields": ("last_login", "date_joined")}),
+        ("Additional info", {"fields": ("salary", "about", "hire_date", "position", "status", "team")}),
     )
     add_fieldsets = UserAdmin.add_fieldsets + (
         (
-            (
-                "Additional info",
-                {
-                    "fields": (
-                        "first_name",
-                        "last_name",
-                        "salary",
-                        "about",
-                        "hire_date",
-                        "position",
-                        "status",
-                        "team",
-                    )
-                },
-            ),
-        )
+            None,
+            {
+                "classes": ("wide",),
+                "fields": (
+                    "username",
+                    "email",
+                    "first_name",
+                    "last_name",
+                    "password1",
+                    "password2",
+                    "salary",
+                    "about",
+                    "hire_date",
+                    "position",
+                    "status",
+                    "team",
+                ),
+            },
+        ),
     )
+
 
 
 @admin.register(Project)

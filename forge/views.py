@@ -176,7 +176,7 @@ class TaskDetailView(LoginRequiredMixin, generic.DetailView):
 class WorkerListView(LoginRequiredMixin, generic.ListView):
     model = get_user_model()
     context_object_name = "workers"
-    paginate_by = 10
+    paginate_by = 5
 
     def get_queryset(self) -> QuerySet:
         queryset = (get_user_model()
@@ -201,13 +201,6 @@ class WorkerListView(LoginRequiredMixin, generic.ListView):
 class WorkerDetailView(LoginRequiredMixin, generic.DetailView):
     model = get_user_model()
     queryset = get_user_model().objects.select_related("team", "position")
-
-    def get_context_data(self, **kwargs) -> dict[str, Any]:
-        context = super().get_context_data(**kwargs)
-        worker = self.get_object()
-        if worker.position and worker.position.name == "ProjectManager":
-            context["project_task_create_url"] = reverse_lazy("project-task-create")
-        return context
 
 
 @method_decorator(user_passes_test(user_is_manager_or_admin), name="dispatch")
