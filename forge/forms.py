@@ -8,7 +8,7 @@ from django.contrib.auth import get_user_model
 from .models import Worker, Position, Team, Project, TaskType, Task
 
 
-class ProjectCreateForm(forms.ModelForm):
+class ProjectForm(forms.ModelForm):
     name = forms.CharField(max_length=255)
     description = forms.CharField(widget=forms.Textarea(attrs={"rows": 3}))
     manager = forms.ModelChoiceField(

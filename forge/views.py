@@ -14,7 +14,7 @@ from django.views.decorators.http import require_POST
 from django.views import generic
 
 from forge.forms import (
-    ProjectCreateForm,
+    ProjectForm,
     TaskForm,
     TaskSearchForm,
     TeamForm,
@@ -233,16 +233,16 @@ class WorkerListView(LoginRequiredMixin, generic.ListView):
 class WorkerDetailView(LoginRequiredMixin, generic.DetailView):
     model = get_user_model()
 
-    def get_queryset(self):
+    def get_queryset(self) -> QuerySet:
         queryset = super().get_queryset()
         return queryset.select_related("team", "position")
 
-    def get_object(self, queryset=None):
+    def get_object(self, queryset=None) -> Any:
         pk = self.kwargs.get("pk")
         worker = get_user_model().objects.get(pk=pk)
         return worker
 
-    def get_context_data(self, **kwargs):
+    def get_context_data(self, **kwargs) -> dict[str | Any]:
         context = super().get_context_data(**kwargs)
         context["user_data_worker"] = self.get_object()
         return context
@@ -296,14 +296,38 @@ class TeamDetailView(LoginRequiredMixin, generic.DetailView):
 @method_decorator(user_passes_test(user_is_manager_or_admin), name="dispatch")
 class ProjectCreateView(generic.CreateView):
     model = Project
-    form_class = ProjectCreateForm
+    form_class = ProjectForm
     template_name = "forge/project_form.html"
     success_url = reverse_lazy("forge:project-list")
+
+    def get_context_data(self, **kwargs) -> dict[str | Any]:
+        context = super().get_context_data(**kwargs)
+        context["is_create"] = True
+        return context
 
 
 class ProjectDetailView(LoginRequiredMixin, generic.DetailView):
     model = Project
     context_object_name = "project"
+
+
+@method_decorator(user_passes_test(user_is_manager_or_admin), name="dispatch")
+class ProjectUpdateView(generic.UpdateView):
+    model = Project
+    form_class = ProjectForm
+    template_name = "forge/project_form.html"
+    success_url = reverse_lazy("forge:project-list")
+
+    def form_valid(self, form) -> HttpResponse:
+        response = super().form_valid(form)
+        self.object.is_completed = False
+        self.object.save()
+        return response
+
+    def get_context_data(self, **kwargs) -> dict[str | Any]:
+        context = super().get_context_data(**kwargs)
+        context["is_create"] = False
+        return context
 
 
 class ProjectListView(LoginRequiredMixin, generic.ListView):

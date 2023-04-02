@@ -7,6 +7,9 @@
         <tr>
           <th scope="col">Project Name</th>
           <th scope="col">Completion Status</th>
+          {% if request.user.is_superuser or request.user.position.name == "ProjectManager" %}
+            <th scope="col">Mark as Completed</th>
+          {% endif %}
         </tr>
       </thead>
       <tbody>
@@ -14,10 +17,17 @@
           <tr>
             <td><a href="{% url 'forge:project-detail' pk=project.id %}">{{ project.name }}</a></td>
             <td>{% if project.is_completed %}&#x2713;{% else %}&#x2717;{% endif %}</td>
+            {% if request.user.is_superuser or request.user.position.name == "ProjectManager" %}
+              <td>
+                <form method="post" action="{% url 'forge:complete-project' pk=project.id %}">
+                  {% csrf_token %}
+                  <button type="submit" class="btn btn-primary" onclick="return confirm('Are you sure you want to mark {{ project.name }} as completed?')">Mark as Completed</button>
+                </form>
+              </td>
+            {% endif %}
           </tr>
         {% endfor %}
       </tbody>
     </table>
   </div>
-
 {% endblock %}

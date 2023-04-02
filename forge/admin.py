@@ -11,9 +11,15 @@ class WorkerAdmin(UserAdmin):
     fieldsets = (
         ("Personal info", {"fields": ("username", "email", "password")}),
         ("Name", {"fields": ("first_name", "last_name")}),
-        ("Permissions", {"fields": ("is_active", "is_staff", "is_superuser", "groups", "user_permissions")}),
+        ("Permissions",
+         {"fields": (
+             "is_active", "is_staff", "is_superuser", "groups", "user_permissions"
+         )}),
         ("Important dates", {"fields": ("last_login", "date_joined")}),
-        ("Additional info", {"fields": ("salary", "about", "hire_date", "position", "status", "team")}),
+        ("Additional info",
+         {"fields": (
+             "salary", "about", "hire_date", "position", "status", "team"
+         )}),
     )
     add_fieldsets = UserAdmin.add_fieldsets + (
         (
@@ -37,7 +43,6 @@ class WorkerAdmin(UserAdmin):
             },
         ),
     )
-
 
 
 @admin.register(Project)

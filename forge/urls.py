@@ -19,7 +19,7 @@ from forge.views import (
     TeamDetailView,
     ProjectCreateView,
     ProjectDetailView,
-    ProjectListView,
+    ProjectListView, ProjectUpdateView,
 )
 
 urlpatterns = [
@@ -39,7 +39,8 @@ urlpatterns = [
     path("team/<int:pk>/", TeamDetailView.as_view(), name="team-detail"),
     path("project/create/", ProjectCreateView.as_view(), name="project-create"),
     path("project/<int:pk>/", ProjectDetailView.as_view(), name="project-detail"),
-    path("project/<int:pk>/complete", complete_project, name="complete-project"),
+    path("project/<int:pk>/change/", ProjectUpdateView.as_view(), name="project-update"),
+    path("project/<int:pk>/complete/", complete_project, name="complete-project"),
     path("project/task/create/", TaskCreateView.as_view(), name="project-task-create"),
     path("projects/", ProjectListView.as_view(), name="project-list"),
 ]
