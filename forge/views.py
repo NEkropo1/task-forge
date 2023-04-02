@@ -27,7 +27,9 @@ from forge.models import Worker, Task, Team, Project
 
 # Create your views here.
 def user_is_manager_or_admin(user: Any) -> bool | Any:
-    return user.is_authenticated and str(user.position) == "ProjectManager" or user.is_superuser
+    return (user.is_authenticated
+            and str(user.position) == "ProjectManager"
+            or user.is_superuser)
 
 
 def welcome(request: HttpRequest) -> HttpResponse:
@@ -99,7 +101,7 @@ def complete_project(request: HttpRequest, pk: int) -> HttpResponse:
     return redirect("forge:project-detail", pk=pk)
 
 
-def worker_change(request, pk):
+def worker_change(request, pk) -> Any:
     worker = get_object_or_404(Worker, pk=pk)
 
     if request.method == "POST":
@@ -113,7 +115,7 @@ def worker_change(request, pk):
     else:
         form = WorkerHireForm(instance=worker)
 
-    return render(request, "worker_change.html", {"form": form, "worker": worker})
+    return render(request, "forge/worker_change.html", {"form": form, "worker": worker})
 
 
 class WorkerRegistrationView(generic.CreateView):
@@ -214,7 +216,7 @@ class WorkerHireView(generic.UpdateView):
     form_class = WorkerHireForm
     template_name = "forge/worker_hire.html"
 
-    def dispatch(self, request, *args, **kwargs):
+    def dispatch(self, request, *args, **kwargs) -> Any:
         return super().dispatch(request, *args, **kwargs)
 
     def get_success_url(self) -> str:
@@ -240,7 +242,7 @@ class TeamCreateView(generic.CreateView):
     form_class = TeamForm
     success_url = reverse_lazy("forge:team-list")
 
-    def dispatch(self, request, *args, **kwargs):
+    def dispatch(self, request, *args, **kwargs) -> Any:
         return super().dispatch(request, *args, **kwargs)
 
 
