@@ -49,7 +49,7 @@ h3 {
 }
 
 .forge-text {
-  background: linear-gradient(to right, #ff5f6d, #ffc371); /* gradient from fire-crimson-tree to fire-red */
+  background: linear-gradient(to right, #ff5f6d, #ffc371);
   -webkit-background-clip: text;
   -webkit-text-fill-color: -moz-default-background-color;
   text-shadow: 2px -2px 3px #9f3def;
@@ -78,9 +78,6 @@ textarea {
   color: #00bfff;
 }
 
-/* Custom CSS for crispy forms */
-
-/* Change the background color of form fields */
 .form-control {
   background-color: #343a40;
   color: #fff;
@@ -108,33 +105,29 @@ input[type="text"]:focus {
   color: #fff;
 }
 
-/* Change the color of labels for form fields */
 .control-label {
   color: #626d79;
 }
 
-/* Change the color of the form button */
 .btn-primary {
   background-color: #34373b;
   border-color: #005b91;
   color: #e0e0e0;
 }
 
-/* Change the hover and focus color of the form button */
 .btn-primary:hover,
 .btn-primary:focus {
   background-color: #34373b;
   border-color: #935e01;
   color: #e0e0e0;
 }
-/* Change the color of the form button */
+
 .btn-outline-primary {
   background-color: #34373b;
   border-color: #005b91;
   color: #e0e0e0;
 }
 
-/* Change the hover and focus color of the form button */
 .btn-outline-primary:hover,
 .btn-outline-primary:focus {
   background-color: #34373b;
@@ -215,13 +208,13 @@ input[type="text"]:focus {
 }
 
 .priority-2 {
-  background-color: #9f7b06; /* Orange */
+  background-color: #9f7b06;
 }
 
 .priority-3 {
-  background-color: #527707; /* Yellowgreen */
+  background-color: #527707;
 }
 
 .priority-4 {
-  background-color: #098309; /* Lightgreen */
+  background-color: #098309;
 }
