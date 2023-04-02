@@ -25,7 +25,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY", "django-insecure-tzr8rmhc9d9y!1jk_0124-fme1_kc)e5ce=u+n^fw^33*5*c02")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.environ.get("DJANGO_DEBUG", "") != "False"
+DEBUG = False
 
 ALLOWED_HOSTS = [
     "127.0.0.1",
@@ -81,6 +81,8 @@ TEMPLATES = [
         },
     },
 ]
+
+CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap4"
 
 CRISPY_TEMPLATE_PACK = "bootstrap4"
 
@@ -144,7 +146,7 @@ STATIC_URL = "static/"
 
 STATICFILES_DIRS = (BASE_DIR / "static",)
 
-STATIC_ROOT = "staticfiles/"
+STATIC_ROOT = BASE_DIR / "staticfiles/"
 
 
 # Default primary key field type
