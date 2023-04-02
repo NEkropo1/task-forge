@@ -281,6 +281,16 @@ class TeamCreateView(generic.CreateView):
         return super().dispatch(request, *args, **kwargs)
 
 
+@method_decorator(user_passes_test(user_is_manager_or_admin), name="dispatch")
+class TeamUpdateView(generic.UpdateView):
+    model = Team
+    form_class = TeamForm
+    success_url = reverse_lazy("forge:team-list")
+
+    def dispatch(self, request, *args, **kwargs) -> Any:
+        return super().dispatch(request, *args, **kwargs)
+
+
 class TeamListView(LoginRequiredMixin, generic.ListView):
     model = Team
     queryset = Team.objects.prefetch_related("members")

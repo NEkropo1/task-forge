@@ -203,11 +203,11 @@ class TeamForm(forms.ModelForm):
         required=False,
     )
 
-    forms.ModelChoiceField(
+    project_manager = forms.ModelChoiceField(
         queryset=Worker.objects.select_related("position").filter(
             position__name__icontains="ProjectManager"
         ),
-        required=False,
+        required=True,
         empty_label=None,
         label="Project Manager",
     )
