@@ -17,6 +17,11 @@
           </a>
         {% endfor %}
       {% endif %}
+          {% if worker.position.name == "ProjectManager" or request.user.is_superuser %}
+       <a href="{% url 'forge:team-create' %}" class="btn btn-primary link-to-page">
+          Create Team
+       </a>
+    {% endif %}
       {% if user_data_worker.teams.all %}
         <h2>Teams</h2>
         {% for team in user_data_worker.teams.all %}
