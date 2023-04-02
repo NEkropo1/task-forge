@@ -84,7 +84,7 @@ def edit_task(request: HttpRequest, pk: int) -> HttpResponse:
             if form.is_valid():
                 form.save()
                 messages.success(request, "Task updated successfully!")
-                return redirect("forge:view-task", pk=pk)
+                return redirect("forge:task-detail", pk=pk)
         else:
             form = TaskForm(instance=task)
         return render(request, "forge/edit_task.html", {"form": form, "task": task})
