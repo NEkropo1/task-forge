@@ -6,10 +6,11 @@
     <table class="team-table">
       <thead>
         <tr>
-          <th class="tasks-top-border">ID</th>
-          <th class="tasks-top-border">Title</th>
-          <th class="tasks-top-border">Deadline</th>
-          <th class="tasks-top-border">Priority</th>
+          <th class="tasks-top-border"><a href="?sort=id&title={{ request.GET.title }}">ID</a></th>
+          <th class="tasks-top-border"><a href="?sort=title&title={{ request.GET.title }}">Title</a></th>
+          <th class="tasks-top-border"><a href="?sort=deadline&title={{ request.GET.title }}">Deadline</a></th>
+          <th class="tasks-top-border"><a href="?sort=priority&title={{ request.GET.title }}">Priority</a></th>
+          <th class="tasks-top-border"><a href="?sort=tag__name&title={{ request.GET.title }}">Task Type</a></th>
           <th class="tasks-top-border">Workers</th>
         </tr>
       </thead>
@@ -20,6 +21,7 @@
           <td><a href="{% url 'forge:task-detail' pk=task.pk %}" class="task-link">{{ task.title }}</a></td>
           <td><a href="{% url 'forge:task-detail' pk=task.pk %}" class="task-link">{{ task.deadline }}</a></td>
           <td><a href="{% url 'forge:task-detail' pk=task.pk %}" class="task-link">{{ task.get_priority_display }}</a></td>
+          <td><a href="{% url 'forge:task-detail' pk=task.pk %}" class="task-link">{{ task.tag.name }}</a></td>
           <td>{{ task.workers.all|length }}</td>
         </tr>
         {% endfor %}

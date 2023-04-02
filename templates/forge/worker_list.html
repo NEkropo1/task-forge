@@ -2,46 +2,49 @@
 {% load crispy_forms_filters %}
 
 {% block content %}
-  {% if request.user.position.name == "ProjectManager" %}
-  <table class="table team-table">
-    <thead>
-      <tr>
-        <th>Full name</th>
-        <th>Email</th>
-        <th>Position</th>
-        <th>Team</th>
-        <th>Actions</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for worker in workers %}
-      <tr>
-        <td><a href="{% url 'forge:worker-detail' pk=worker.pk %}">{{ worker.first_name }} {{ worker.last_name }}</a></td>
-        <td>{{ worker.email }}</td>
-        <td>{{ worker.position }}</td>
-        <td>{% if worker.team %}<a href="{% url 'forge:team-detail' pk=worker.team.pk %}">{{ worker.team }}</a>{% else %}-{% endif %}</td>
-        <td>
-          {% if not worker.position %}
-          <a href="{% url 'forge:worker-hire' pk=worker.pk %}" class="btn btn-primary">Hire!</a>
-          {% else %}
-          <a href="{% url 'forge:worker-change' pk=worker.pk %}" class="btn btn-primary">Change</a>
-          {% endif %}
-        </td>
-      </tr>
-      {% empty %}
-      <tr>
-        <td>No workers found.</td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
+  {% if tasks %}
+    <table class="team-table">
+      <thead>
+        <tr>
+          <th class="tasks-top-border"><a href="?sort=id">ID</a></th>
+          <th class="tasks-top-border"><a href="?sort=title">Title</a></th>
+          <th class="tasks-top-border"><a href="?sort=deadline">Deadline</a></th>
+          <th class="tasks-top-border"><a href="?sort=priority">Priority</a></th>
+          <th class="tasks-top-border"><a href="?sort=tag__name">Task Type</a></th>
+          <th class="tasks-top-border">Workers</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for task in tasks %}
+        <tr class="priority-{{ task.priority }} task-row">
+          <td><a href="{% url 'forge:task-detail' pk=task.pk %}" class="task-link">{{ task.pk }}</a></td>
+          <td><a href="{% url 'forge:task-detail' pk=task.pk %}" class="task-link">{{ task.title }}</a></td>
+          <td><a href="{% url 'forge:task-detail' pk=task.pk %}" class="task-link">{{ task.deadline }}</a></td>
+          <td><a href="{% url 'forge:task-detail' pk=task.pk %}" class="task-link">{{ task.get_priority_display }}</a></td>
+          <td><a href="{% url 'forge:task-detail' pk=task.pk %}" class="task-link">{{ task.tag.name }}</a></td>
+          <td>{{ task.workers.all|length }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <p>There are no tasks for you right now, drink a coffee or add a task :)</p>
   {% endif %}
-  <form action="" method="get" class="form-inline">
-    <div class="input-group">
-      {{ search_form|crispy }}
-      <div class="input-group-append">
-        <button class="btn btn-outline-primary" type="submit"><i class="btn-outline-primary">🔎</i></button>
-      </div>
+  <div class="d-flex">
+    <div class="mr-auto">
+      <form action="" method="get" class="form-inline">
+        {{ search_form|crispy }}
+        <button class="btn btn-primary" type="submit"><i class="fas fa-search">🔎</i></button>
+      </form>
     </div>
-  </form>
+
+    {% if request.user.position %}
+      <div class="ml-auto">
+        <a href="{% url 'forge:project-task-create' %}" class="btn btn-primary">
+          Create task
+        </a>
+      </div>
+    {% endif %}
+  </div>
+
 {% endblock %}

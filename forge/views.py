@@ -156,11 +156,22 @@ class TaskListView(LoginRequiredMixin, generic.ListView):
         )
         title = self.request.GET.get("title", "")
         user = self.request.user
+        sort_by = self.request.GET.get("sort")
 
         if title:
             queryset = queryset.filter(
                 title__icontains=title,
             )
+
+        if sort_by:
+            if sort_by == "title":
+                queryset = queryset.order_by("title")
+            elif sort_by == "deadline":
+                queryset = queryset.order_by("-deadline")
+            elif sort_by == "priority":
+                queryset = queryset.order_by("-priority")
+            elif sort_by == "tag":
+                queryset = queryset.order_by("tag__name")
 
         if user_is_manager_or_admin(user):
             return queryset
@@ -211,6 +222,11 @@ class WorkerListView(LoginRequiredMixin, generic.ListView):
 class WorkerDetailView(LoginRequiredMixin, generic.DetailView):
     model = get_user_model()
     queryset = get_user_model().objects.select_related("team", "position")
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["worker"] = self.get_object()
+        return context
 
 
 @method_decorator(user_passes_test(user_is_manager_or_admin), name="dispatch")
