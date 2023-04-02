@@ -219,9 +219,6 @@ class WorkerHireView(generic.UpdateView):
     form_class = WorkerHireForm
     template_name = "forge/worker_hire.html"
 
-    def dispatch(self, request, *args, **kwargs) -> Any:
-        return super().dispatch(request, *args, **kwargs)
-
     def get_success_url(self) -> str:
         return reverse_lazy("forge:worker-detail", kwargs={"pk": self.kwargs["pk"]})
 

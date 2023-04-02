@@ -56,7 +56,7 @@ class WorkerHireForm(forms.ModelForm):
     status = forms.ChoiceField(
         choices=Worker.STATUS_CHOICES[1:],
         widget=forms.RadioSelect(attrs={"class": "form-check-input"}),
-        required=False,
+        required=True,
     )
 
     team = forms.ModelChoiceField(
