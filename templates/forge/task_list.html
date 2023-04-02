@@ -2,7 +2,6 @@
 {% load crispy_forms_filters %}
 
 {% block content %}
-
   {% if tasks %}
     <table class="team-table">
       <thead>
@@ -29,20 +28,21 @@
   {% else %}
     <p>There are no tasks for you right now, drink a coffee or add a task :)</p>
   {% endif %}
-    <form action="" method="get" class="form-inline">
-      <div class="input-group link-to-page">
+  <div class="d-flex">
+    <div class="mr-auto">
+      <form action="" method="get" class="form-inline">
         {{ search_form|crispy }}
-        <div class="input-group-append">
-          <button class="btn btn-outline-secondary link-to-page" type="submit">🔎<i class="fas fa-search link-to-page"></i></button>
-        </div>
-      </div>
-    </form>
-  <h1>
+        <button class="btn btn-primary" type="submit"><i class="fas fa-search">🔎</i></button>
+      </form>
+    </div>
+
     {% if request.user.position %}
-    <a href="{% url 'forge:project-task-create' %}" class="btn btn-primary">
-      Create task
-    </a>
+      <div class="ml-auto">
+        <a href="{% url 'forge:project-task-create' %}" class="btn btn-primary">
+          Create task
+        </a>
+      </div>
     {% endif %}
-  </h1>
+  </div>
 
 {% endblock %}

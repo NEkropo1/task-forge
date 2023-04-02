@@ -142,14 +142,14 @@ class WorkerSearchForm(forms.Form):
         label="",
         widget=forms.TextInput(
             attrs={
-                "placeholder": "Search workers by name here",
+                "placeholder": "Search workers by name",
             }
         ),
     )
 
 
 class TaskSearchForm(forms.Form):
-    name = forms.CharField(
+    title = forms.CharField(
         max_length=255,
         required=False,
         label="",

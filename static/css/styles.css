@@ -71,6 +71,12 @@ textarea {
   border: 1px solid #005b91;
 }
 
+.form-inline .input-group {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
 .textarea {
   background-color: #343a40;
   color: #00bfff;
@@ -101,6 +107,20 @@ input[type="text"]:focus {
 /* Change the hover and focus color of the form button */
 .btn-primary:hover,
 .btn-primary:focus {
+  background-color: #34373b;
+  border-color: #935e01;
+  color: #e0e0e0;
+}
+/* Change the color of the form button */
+.btn-outline-primary {
+  background-color: #34373b;
+  border-color: #005b91;
+  color: #e0e0e0;
+}
+
+/* Change the hover and focus color of the form button */
+.btn-outline-primary:hover,
+.btn-outline-primary:focus {
   background-color: #34373b;
   border-color: #935e01;
   color: #e0e0e0;

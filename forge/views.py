@@ -154,9 +154,17 @@ class TaskListView(LoginRequiredMixin, generic.ListView):
         queryset = Task.objects.prefetch_related("project", "workers").filter(
             project__is_completed=False
         )
+        title = self.request.GET.get("title", "")
         user = self.request.user
+
+        if title:
+            queryset = queryset.filter(
+                title__icontains=title,
+            )
+
         if user_is_manager_or_admin(user):
             return queryset
+
         return queryset.filter(
             is_completed=False,
             workers__id=user.id,
@@ -164,7 +172,9 @@ class TaskListView(LoginRequiredMixin, generic.ListView):
 
     def get_context_data(self, *, object_list=None, **kwargs) -> dict[str, Any]:
         context = super().get_context_data()
-        context["search_form"] = TaskSearchForm()
+        title = self.request.GET.get("title", "")
+
+        context["search_form"] = TaskSearchForm(initial={"title": title})
         return context
 
 
