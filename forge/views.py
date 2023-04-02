@@ -164,14 +164,25 @@ class TaskListView(LoginRequiredMixin, generic.ListView):
             )
 
         if sort_by:
+            last_sort_field = self.request.session.get("last_sort_field")
+            last_sort_order = self.request.session.get("last_sort_order")
+
+            if sort_by == last_sort_field:
+                sort_order = "-" + last_sort_order if last_sort_order == "" else ""
+            else:
+                sort_order = ""
+
+            self.request.session["last_sort_field"] = sort_by
+            self.request.session["last_sort_order"] = sort_order
+
             if sort_by == "title":
-                queryset = queryset.order_by("title")
+                queryset = queryset.order_by(sort_order + "title")
             elif sort_by == "deadline":
-                queryset = queryset.order_by("-deadline")
+                queryset = queryset.order_by(sort_order + "deadline")
             elif sort_by == "priority":
-                queryset = queryset.order_by("-priority")
+                queryset = queryset.order_by(sort_order + "priority")
             elif sort_by == "tag":
-                queryset = queryset.order_by("tag__name")
+                queryset = queryset.order_by(sort_order + "tag__name")
 
         if user_is_manager_or_admin(user):
             return queryset
