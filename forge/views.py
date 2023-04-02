@@ -232,11 +232,19 @@ class WorkerListView(LoginRequiredMixin, generic.ListView):
 
 class WorkerDetailView(LoginRequiredMixin, generic.DetailView):
     model = get_user_model()
-    queryset = get_user_model().objects.select_related("team", "position")
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        return queryset.select_related("team", "position")
+
+    def get_object(self, queryset=None):
+        pk = self.kwargs.get("pk")
+        worker = get_user_model().objects.get(pk=pk)
+        return worker
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["worker"] = self.get_object()
+        context["user_data_worker"] = self.get_object()
         return context
 
 

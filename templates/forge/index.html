@@ -1,32 +1,94 @@
 {% extends "base.html" %}
 
 {% block content %}
-  <div class="container-fluid">
-    <div class="row justify-content-center align-items-center h-100">
+  <div class="welcome-container">
+    <h1>Welcome to <span class="forge-text">Forge</span></h1>
+  </div>
+
+
+  <div class="blocks-container">
+    <div class="row justify-content-center align-items-center">
       <div class="col-lg-6 col-md-8 col-sm-12">
-        <h1>Welcome to Forge!</h1>
         <div class="container">
           <div class="row">
             <div class="col-lg-4 col-md-4 col-sm-12 mb-4">
-              <p>Already registered users: {{ num_users }}</p>
-              <p>While hired from them: {{ num_workers }}</p>
+              <div class="counter">
+                <div class="row justify-content-center align-items-center">{{ num_users }}</div>
+                <div class="row justify-content-center align-items-center">Registered users</div>
+              </div>
+              <div class="counter">
+                <div class="row justify-content-center align-items-center">{{ num_workers }}</div>
+                <div class="row justify-content-center align-items-center">of them already hired!</div>
+              </div>
             </div>
             <div class="col-lg-4 col-md-4 col-sm-12 mb-4">
-              <p>Overall task created on our project: {{ tasks_overall }}</p>
-              <p>While already completed: {{ tasks_done }}</p>
+              <div class="counter">
+                <div class="row justify-content-center align-items-center">{{ tasks_overall }}</div>
+                <div class="row justify-content-center align-items-center">Overall tasks</div>
+              </div>
+              <div class="counter">
+                <div class="row justify-content-center align-items-center">{{ tasks_done }}</div>
+                <div class="row justify-content-center align-items-center">already completed!</div>
+              </div>
             </div>
             <div class="col-lg-4 col-md-4 col-sm-12 mb-4">
-              <p>We have more than one team <span class="jokes-team">*jokes*</span> : {{ teams }}</p>
+              <div class="counter">
+                <div class="row justify-content-center align-items-right">Also we have different teams, more than 1 <span class="jokes-team">*jokes*</span> </div>
+                <div class="row justify-content-center align-items-center">{{ teams }}</div>
+              </div>
+              <p></p>
             </div>
           </div>
-          <div class="row justify-content-center align-items-center">
-              <p>Our best team: <span id="rainbow-color">{{ best_team }}</span></p>
-          </div>
-          <div class="row justify-content-center align-items-center">
-              <p>With {{ max_tasks_done }} tasks completed across users. Congratulations!</p>
-          </div>
-         </div>
+        </div>
       </div>
     </div>
   </div>
+
+  <div class="congrats-container">
+    <div class="row justify-content-center align-items-center">
+      <p>Congratulations to our best team!</p>
+    </div>
+  </div>
+
+  <div class="team-container">
+    <div class="row justify-content-center align-items-center">
+      <div class="col-lg-1 col-md-1 col-sm-5 mb-2">
+        <p><span id="best-team">{{ best_team }}</span></p>
+      </div>
+      <div class="col-lg-1 col-md-1 col-sm-5 mb-2">
+        <p>With <span id="num-completed">{{ max_tasks_done }}</span> tasks completed!</p>
+      </div>
+    </div>
+  </div>
+
 {% endblock %}
+
+
+<style>
+  .welcome-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 300px;
+  }
+
+  .counter {
+    text-align: center;
+  }
+
+  .blocks-container {
+    padding-right: 25px;
+    padding-bottom: 20px;
+  }
+
+  .team-container .row {
+  margin-left: 10px;
+  margin-right: 10px;
+}
+  .team-container p {
+  border: none;
+  padding: 5px;
+}
+
+</style>
+

@@ -11,7 +11,7 @@ a {
 
 h1 {
   color: #3dacef;
-  text-shadow: 0 0 3px #a5a2f8;
+  text-shadow: 0 1px 3px #9f3def;
 }
 
 h2 {
@@ -24,7 +24,6 @@ h3 {
   text-shadow: 0 0 1px #a5a2f8;
 }
 
-
 .lightsaber {
   position: relative;
   width: 20px;
@@ -35,9 +34,26 @@ h3 {
   box-shadow: 0 0 5px 1px #4facde;
 }
 
+.welcome-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 10vh;
+}
+
 .jokes-team {
   font-style: italic;
   color: rgba(154, 72, 4, 0.9);
+  display: inline-block;
+}
+
+.forge-text {
+  background: linear-gradient(to right, #ff5f6d, #ffc371); /* gradient from fire-crimson-tree to fire-red */
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: -moz-default-background-color;
+  text-shadow: 2px -2px 3px #9f3def;
+  font-weight: bold;
 }
 
 ::selection {
@@ -184,6 +200,12 @@ input[type="text"]:focus {
   background-color: #333;
   color: #7c6c6c;
   border-color: #2d2c2c;
+}
+
+#best-team {
+  background: linear-gradient(135deg, #ffdd00, #ff5f5f);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 .priority-1 {
