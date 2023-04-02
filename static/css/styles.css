@@ -9,6 +9,32 @@ a {
   color: #1DA1F2;
 }
 
+h1 {
+  color: #3dacef;
+  text-shadow: 0 0 3px #a5a2f8;
+}
+
+h2 {
+  color: #3dacef;
+  text-shadow: 0 0 1px #a5a2f8;
+}
+
+h3 {
+  color: #3dacef;
+  text-shadow: 0 0 1px #a5a2f8;
+}
+
+
+.lightsaber {
+  position: relative;
+  width: 20px;
+  height: 200px;
+  border: 2px solid #a5a2f8;
+  border-radius: 10px;
+  background-color: #30e6f5;
+  box-shadow: 0 0 5px 1px #4facde;
+}
+
 .jokes-team {
   font-style: italic;
   color: rgba(154, 72, 4, 0.9);
@@ -69,7 +95,7 @@ input[type="text"]:focus {
 .btn-primary {
   background-color: #34373b;
   border-color: #005b91;
-  color: #fff;
+  color: #e0e0e0;
 }
 
 /* Change the hover and focus color of the form button */
@@ -77,7 +103,7 @@ input[type="text"]:focus {
 .btn-primary:focus {
   background-color: #34373b;
   border-color: #935e01;
-  color: #fff;
+  color: #e0e0e0;
 }
 
 .page-item.active .page-link {
@@ -88,7 +114,6 @@ input[type="text"]:focus {
 
 .table thead th {
   border-bottom-color: #1d2b3d;
-  border-left: 1px #1d2b3d;
 }
 
 .table td,
@@ -119,12 +144,13 @@ input[type="text"]:focus {
 .team-table th,
 .team-table td {
   padding: 8px;
+  margin-top: 10px;
   text-align: left;
   border: 1px solid #0b032d;
 }
 
 .task-link {
-  color: #8c7d7d;
+  color: #131111;
   text-decoration: none;
   cursor: pointer;
 }
@@ -141,19 +167,19 @@ input[type="text"]:focus {
 }
 
 .priority-1 {
-  background-color: #a80303;
+  background-color: #9b0505;
   /* Red */
-  color: #fff;
+  color: #776f6f;
 }
 
 .priority-2 {
-  background-color: #8f5e03; /* Orange */
+  background-color: #9f7b06; /* Orange */
 }
 
 .priority-3 {
-  background-color: #486907; /* Yellowgreen */
+  background-color: #527707; /* Yellowgreen */
 }
 
 .priority-4 {
-  background-color: #1a8f1a; /* Lightgreen */
+  background-color: #098309; /* Lightgreen */
 }

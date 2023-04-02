@@ -2,7 +2,7 @@
 
 {% block content %}
   <h1>{{ team.name }}</h1>
-  <table>
+  <table class="team-table">
     <thead>
       <tr>
         <th>Position</th>
@@ -29,22 +29,4 @@
 </tbody>
 
   </table>
-{% endblock %}
-
-
-{% block styles %}
-  <style>
-    table {
-      border-collapse: collapse;
-      width: 100%;
-    }
-    th, td {
-      padding: 8px;
-      text-align: left;
-      border-bottom: 4px solid #9b0000;
-    }
-    th {
-      background-color: #9d0000;
-    }
-  </style>
 {% endblock %}

@@ -2,6 +2,9 @@ from django.urls import path
 
 from forge.views import (
     index,
+    complete_project,
+    edit_task,
+    worker_change,
     welcome,
     WorkerRegistrationView,
     WorkerListView,
@@ -17,7 +20,6 @@ from forge.views import (
     ProjectCreateView,
     ProjectDetailView,
     ProjectListView,
-    complete_project,
 )
 
 urlpatterns = [
@@ -27,9 +29,11 @@ urlpatterns = [
     path("tasks/", TaskListView.as_view(), name="task-list"),
     path("tasks/<int:pk>/", TaskDetailView.as_view(), name="task-detail"),
     path("tasks/<int:pk>/complete/", complete_task, name="complete-task"),
+    path("tasks/<int:pk>/edit/", edit_task, name="edit-task"),
     path("workers/", WorkerListView.as_view(), name="worker-list"),
     path("workers/<int:pk>/", WorkerDetailView.as_view(), name="worker-detail"),
-    path("workers/<int:pk>/hire", WorkerHireView.as_view(), name="worker-hire"),
+    path("workers/<int:pk>/change/", worker_change, name="worker-change"),
+    path("workers/<int:pk>/hire/", WorkerHireView.as_view(), name="worker-hire"),
     path("teams/", TeamListView.as_view(), name="team-list"),
     path("team/create/", TeamCreateView.as_view(), name="team-create"),
     path("team/<int:pk>/", TeamDetailView.as_view(), name="team-detail"),

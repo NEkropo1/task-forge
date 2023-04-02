@@ -1,10 +1,11 @@
 from typing import Tuple, Any
 
+from django.contrib import messages
 from django.core.exceptions import ValidationError
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.db.models import QuerySet, F, OuterRef, Count, Subquery
+from django.db.models import QuerySet, F, OuterRef, Count, Subquery, Q
 from django.http import HttpResponseRedirect, HttpRequest, HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy
@@ -71,12 +72,48 @@ def complete_task(request: HttpRequest, pk: int) -> HttpResponse:
     return redirect("forge:task-detail", pk=pk)
 
 
+def edit_task(request: HttpRequest, pk: int) -> HttpResponse:
+    task = get_object_or_404(Task, pk=pk)
+    user = request.user
+
+    if user_is_manager_or_admin(user):
+        if request.method == "POST":
+            form = TaskForm(request.POST, instance=task)
+            if form.is_valid():
+                form.save()
+                messages.success(request, "Task updated successfully!")
+                return redirect("forge:view-task", pk=pk)
+        else:
+            form = TaskForm(instance=task)
+        return render(request, "forge/edit_task.html", {"form": form, "task": task})
+    else:
+        messages.error(request, "You do not have permission to edit this task.")
+        return redirect("forge:view-task", pk=pk)
+
+
 @require_POST
 def complete_project(request: HttpRequest, pk: int) -> HttpResponse:
     project = get_object_or_404(Project, pk=pk)
     project.is_completed = True
     project.save()
     return redirect("forge:project-detail", pk=pk)
+
+
+def worker_change(request, pk):
+    worker = get_object_or_404(Worker, pk=pk)
+
+    if request.method == "POST":
+        if user_is_manager_or_admin(request.user):
+            form = WorkerHireForm(request.POST, instance=worker)
+            if form.is_valid():
+                form.save()
+                return redirect("forge:worker-list")
+        else:
+            form = WorkerHireForm(instance=worker)
+    else:
+        form = WorkerHireForm(instance=worker)
+
+    return render(request, "worker_change.html", {"form": form, "worker": worker})
 
 
 class WorkerRegistrationView(generic.CreateView):
@@ -140,7 +177,10 @@ class WorkerListView(LoginRequiredMixin, generic.ListView):
     paginate_by = 10
 
     def get_queryset(self) -> QuerySet:
-        queryset = get_user_model().objects.select_related("position")
+        queryset = (get_user_model()
+                    .objects.select_related("position")
+                    .filter(~Q(position__name="ProjectManager"))
+                    )
         name = self.request.GET.get("name")
         if name:
             return queryset.filter(first_name__icontains=name)
@@ -169,7 +209,7 @@ class WorkerDetailView(LoginRequiredMixin, generic.DetailView):
 
 
 @method_decorator(user_passes_test(user_is_manager_or_admin), name="dispatch")
-class WorkerHireView(LoginRequiredMixin, generic.UpdateView):
+class WorkerHireView(generic.UpdateView):
     queryset = Worker.objects.all()
     form_class = WorkerHireForm
     template_name = "forge/worker_hire.html"
@@ -195,7 +235,7 @@ class WorkerHireView(LoginRequiredMixin, generic.UpdateView):
 
 
 @method_decorator(user_passes_test(user_is_manager_or_admin), name="dispatch")
-class TeamCreateView(LoginRequiredMixin, generic.CreateView):
+class TeamCreateView(generic.CreateView):
     model = Team
     form_class = TeamForm
     success_url = reverse_lazy("forge:team-list")

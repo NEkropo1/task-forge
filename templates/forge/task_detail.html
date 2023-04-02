@@ -4,7 +4,11 @@
   {% if user.status %}
     <h1>{{ task.title }}</h1>
     <br>
-    <p>{{ task.description }}</p>
+    <p>{{ task.description }}
+      {% if user.position.name == "ProjectManager" or user.is_superuser %}
+        <a href="{% url 'forge:edit-task' task.id %}" class="btn btn-primary link-to-page">Edit Task</a>
+      {% endif %}
+    </p>
     <p>Deadline: {{ task.deadline }}</p>
     {% if task.is_completed %}
       <h3>This task has been completed !</h3>
@@ -12,7 +16,6 @@
         {% for worker in task.workers.all %}
           <li> <a href="{{ worker.get_absolute_url }}">{{ worker }}</a></li>
         {% endfor %}
-
       </ul>
     {% else %}
       <form method="post" action="{% url 'forge:complete-task' task.id %}">
@@ -20,6 +23,7 @@
         <button type="submit" class="btn-primary page-link" onclick="return confirm('Are you sure you want to mark this task as completed?')">Mark as completed</button>
       </form>
     {% endif %}
+
   {% else %}
     <p>You do not have permission to view this task.</p>
   {% endif %}

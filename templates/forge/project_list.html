@@ -1,20 +1,23 @@
 {% extends "base.html" %}
 
 {% block content %}
-  <table class="table">
-    <thead>
-      <tr>
-        <th scope="col">Project Name</th>
-        <th scope="col">Completion Status</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for project in project_list %}
+  <div class="team-container">
+    <table class="team-table">
+      <thead>
         <tr>
-          <td><a href="{% url 'forge:project-detail' pk=project.id %}">{{ project.name }}</a></td>
-          <td>{% if project.is_completed %}&#x2713;{% else %}&#x2717;{% endif %}</td>
+          <th scope="col">Project Name</th>
+          <th scope="col">Completion Status</th>
         </tr>
-      {% endfor %}
-    </tbody>
-  </table>
+      </thead>
+      <tbody>
+        {% for project in project_list %}
+          <tr>
+            <td><a href="{% url 'forge:project-detail' pk=project.id %}">{{ project.name }}</a></td>
+            <td>{% if project.is_completed %}&#x2713;{% else %}&#x2717;{% endif %}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
 {% endblock %}

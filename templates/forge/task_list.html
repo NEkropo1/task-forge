@@ -1,31 +1,17 @@
 {% extends "base.html" %}
 {% load crispy_forms_filters %}
 
-{% block personal %}
-  <h1>
-    {% if request.user.position %}
-    <a href="{% url 'forge:project-task-create' %}" class="btn btn-primary link-to-page">
-      Create task
-    </a>
-    {% endif %}
-  </h1>
-{% endblock %}
-
 {% block content %}
-  <form action="" method="get" class="form-inline">
-    {{ search_form|crispy }}
-    <input type="submit" value="🔎" class="button btn-secondary">
-  </form>
 
   {% if tasks %}
-    <table class="table">
+    <table class="team-table">
       <thead>
         <tr>
-          <th>ID</th>
-          <th>Title</th>
-          <th>Deadline</th>
-          <th>Priority</th>
-          <th>Workers</th>
+          <th class="tasks-top-border">ID</th>
+          <th class="tasks-top-border">Title</th>
+          <th class="tasks-top-border">Deadline</th>
+          <th class="tasks-top-border">Priority</th>
+          <th class="tasks-top-border">Workers</th>
         </tr>
       </thead>
       <tbody>
@@ -35,7 +21,7 @@
           <td><a href="{% url 'forge:task-detail' pk=task.pk %}" class="task-link">{{ task.title }}</a></td>
           <td><a href="{% url 'forge:task-detail' pk=task.pk %}" class="task-link">{{ task.deadline }}</a></td>
           <td><a href="{% url 'forge:task-detail' pk=task.pk %}" class="task-link">{{ task.get_priority_display }}</a></td>
-          <td><a href="{% url 'forge:task-detail' pk=task.pk %}" class="task-link">{{ task.workers.all|length }}</a></td>
+          <td>{{ task.workers.all|length }}</td>
         </tr>
         {% endfor %}
       </tbody>
@@ -43,4 +29,20 @@
   {% else %}
     <p>There are no tasks for you right now, drink a coffee or add a task :)</p>
   {% endif %}
+    <form action="" method="get" class="form-inline">
+      <div class="input-group link-to-page">
+        {{ search_form|crispy }}
+        <div class="input-group-append">
+          <button class="btn btn-outline-secondary link-to-page" type="submit">🔎<i class="fas fa-search link-to-page"></i></button>
+        </div>
+      </div>
+    </form>
+  <h1>
+    {% if request.user.position %}
+    <a href="{% url 'forge:project-task-create' %}" class="btn btn-primary">
+      Create task
+    </a>
+    {% endif %}
+  </h1>
+
 {% endblock %}
