@@ -1,6 +1,8 @@
 <ul class="sidebar-nav list-group">
   {% if user.is_authenticated %}
+    {% if user.is_superuser or user.position == "ProjectManager" %}
     <li class="list-group-item list-group-item-custom">User:<a href="{{ user.get_absolute_url }}">{{ user.get_username }}</a></li>
+    {% endif %}
     <li class="list-group-item list-group-item-custom"><a href="{% url 'logout' %}?next={{request.path}}">Logout</a></li>
     <li class="list-group-item list-group-item-custom"><a href="{% url 'forge:task-list' %}">Tasks</a></li>
     <li class="list-group-item list-group-item-custom"><a href="{% url 'forge:project-list' %}">Projects</a></li>
