@@ -1,14 +1,24 @@
 {% extends "base.html" %}
-{% block personal %}
-  <ul style="padding-top: 35px">
-    {% for team in teams %}
-      <a href="{% url 'forge:team-detail' team.pk %}">{{ team.name }}</a><br>
 
-    {% endfor %}
-  </ul>
-  {% if user.position.name == "ProjectManager" %}
-  {% endif %}
-
+{% block content %}
+  <div class="team-container">
+    <table class="team-table">
+      <thead>
+        <tr>
+          <th>Team Name</th>
+          <th>Project Manager</th>
+          <th>Number of Members</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for team in teams %}
+          <tr>
+            <td><a href="{% url 'forge:team-detail' team.pk %}">{{ team.name }}</a></td>
+            <td><a href="{% url 'forge:worker-detail' team.project_manager.pk %}">{{ team.project_manager.get_full_name }}</a></td>
+            <td>{{ team.members.count }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
 {% endblock %}
-
-

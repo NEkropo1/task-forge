@@ -4,7 +4,7 @@ from django.core.exceptions import ValidationError
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.db.models import QuerySet, Sum, F
+from django.db.models import QuerySet, F, OuterRef, Count, Subquery
 from django.http import HttpResponseRedirect, HttpRequest, HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy
@@ -26,9 +26,7 @@ from forge.models import Worker, Task, Team, Project
 
 # Create your views here.
 def user_is_manager_or_admin(user: Any) -> bool | Any:
-    return user.is_authenticated and (
-        user.position == "ProjectManager" or user.is_superuser
-    )
+    return user.is_authenticated and str(user.position) == "ProjectManager" or user.is_superuser
 
 
 def welcome(request: HttpRequest) -> HttpResponse:
@@ -117,10 +115,13 @@ class TaskListView(LoginRequiredMixin, generic.ListView):
         queryset = Task.objects.prefetch_related("project", "workers").filter(
             project__is_completed=False
         )
-        name = self.request.GET.get("name")
-        if name:
-            return queryset.filter(title__icontains=name)
-        return queryset
+        user = self.request.user
+        if user_is_manager_or_admin(user):
+            return queryset
+        return queryset.filter(
+            is_completed=False,
+            workers__id=user.id,
+        )
 
     def get_context_data(self, *, object_list=None, **kwargs) -> dict[str, Any]:
         context = super().get_context_data()
@@ -167,11 +168,7 @@ class WorkerDetailView(LoginRequiredMixin, generic.DetailView):
         return context
 
 
-@method_decorator(user_passes_test(
-    lambda user: user.is_authenticated and (
-        user.position == "ProjectManager" or user.is_superuser
-    )
-), name="dispatch")
+@method_decorator(user_passes_test(user_is_manager_or_admin), name="dispatch")
 class WorkerHireView(LoginRequiredMixin, generic.UpdateView):
     queryset = Worker.objects.all()
     form_class = WorkerHireForm
@@ -197,10 +194,7 @@ class WorkerHireView(LoginRequiredMixin, generic.UpdateView):
             return response
 
 
-@method_decorator(user_passes_test(
-    user_is_manager_or_admin,
-    login_url="login",
-), name="dispatch")
+@method_decorator(user_passes_test(user_is_manager_or_admin), name="dispatch")
 class TeamCreateView(LoginRequiredMixin, generic.CreateView):
     model = Team
     form_class = TeamForm
@@ -222,12 +216,7 @@ class TeamDetailView(LoginRequiredMixin, generic.DetailView):
     context_object_name = "team"
 
 
-@method_decorator(user_passes_test(
-    lambda user: user.is_authenticated and (
-        user.position == "ProjectManager" or user.is_superuser
-    ),
-    login_url="login",
-), name="dispatch")
+@method_decorator(user_passes_test(user_is_manager_or_admin), name="dispatch")
 class ProjectCreateView(generic.CreateView):
     model = Project
     form_class = ProjectCreateForm
@@ -244,18 +233,25 @@ class ProjectListView(LoginRequiredMixin, generic.ListView):
     model = Project
 
     def get_queryset(self) -> QuerySet:
-        query = super().get_queryset().filter(manager=self.request.user)
-        return query
+        user = get_user_model().objects.get(id=self.request.user.id)
+        if user.position == "ProjectManager":
+            return super().get_queryset().filter(manager=self.request.user)
+        return super().get_queryset()
 
 
 def get_max_tasks_done(teams: QuerySet) -> Tuple[int, str] | Tuple[int, None]:
+    subquery = (
+        Task.objects.filter(workers__team=OuterRef("pk"))
+        .values("workers__teams__id")
+        .annotate(total_tasks_done=Count("pk"))
+        .values("total_tasks_done")[:1]
+    )
+
     team_totals = (
-        teams.annotate(
-            total_tasks_done=Sum("members__tasks__is_completed"), team_name=F("name")
-        )
+        teams.annotate(total_tasks_done=Subquery(subquery), team_name=F("name"))
         .values("total_tasks_done", "team_name")
         .order_by("-total_tasks_done", "team_name")
-    )
+    ).distinct()
 
     if not team_totals:
         return 0, None

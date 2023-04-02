@@ -2,6 +2,9 @@
   {% if user.is_authenticated %}
     <li class="list-group-item list-group-item-custom">User:<a href="{{ user.get_absolute_url }}">{{ user.get_username }}</a></li>
     <li class="list-group-item list-group-item-custom"><a href="{% url 'logout' %}?next={{request.path}}">Logout</a></li>
+    <li class="list-group-item list-group-item-custom"><a href="{% url 'forge:task-list' %}">Tasks</a></li>
+    <li class="list-group-item list-group-item-custom"><a href="{% url 'forge:project-list' %}">Projects</a></li>
+    <li class="list-group-item list-group-item-custom"><a href="{% url 'forge:team-list' %}">Teams</a></li>
   {% else %}
     <li class="list-group-item list-group-item-custom"><a href="{% url 'login' %}?next={{request.path}}">Login</a></li>
     <li class="list-group-item list-group-item-custom"><a href="{% url 'forge:register' %}?next={{request.path}}" id="rainbow-text">Sign up</a></li>
@@ -11,10 +14,7 @@
   <br>
 
   <li class="list-group-item list-group-item-custom"><a href="{% url 'forge:index' %}">Home</a></li>
-  <li class="list-group-item list-group-item-custom"><a href="{% url 'forge:task-list' %}">Tasks</a></li>
 
-  <li class="list-group-item list-group-item-custom"><a href="{% url 'forge:project-list' %}">Projects</a></li>
-  <li class="list-group-item list-group-item-custom"><a href="{% url 'forge:team-list' %}">Teams</a></li>
   {% if user.is_authenticated and user.position.name == "ProjectManager"%}
   <li class="list-group-item list-group-item-custom"><a href="{% url 'forge:worker-list' %}">Workers</a></li>
   {% endif %}
