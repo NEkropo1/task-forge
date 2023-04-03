@@ -3,16 +3,17 @@ from django.contrib.auth import get_user_model
 from django.test import TestCase, Client
 from django.urls import reverse
 from forge.models import Position, Team, Worker
+from forge.views import user_is_manager_or_admin
 
 TEST_REGISTERED_URLS = [
     reverse("forge:index"),
     reverse("forge:worker-detail", args=[1]),
     reverse("forge:worker-list"),
     reverse("forge:welcome"),
-    reverse("forge:worker-list"),
-    reverse("forge:worker-list"),
-    reverse("forge:worker-list"),
-    reverse("forge:worker-list"),
+    reverse("forge:project-list"),
+    reverse("forge:task-list"),
+    reverse("forge:project-detail", args=[1]),
+    reverse("forge:worker-detail", args=[1]),
 ]
 
 
@@ -117,3 +118,49 @@ class WorkerHireViewTestCase(TestCase):
         form = response.context["form"]
         self.assertFalse(form.is_valid())
         self.assertEqual(form.errors, {"salary": ["Enter a whole number."]})
+
+
+class UserIsManagerOrAdminTest(TestCase):
+    def setUp(self):
+        self.User = get_user_model()
+        self.pm = Position.objects.create(
+            name="ProjectManager"
+        )
+        self.position_worker = Position.objects.create(
+            name="worker"
+        )
+        self.admin_user = self.User.objects.create_superuser(
+            username="admin",
+            email="admin@example.com",
+            password="testpassword",
+        )
+        self.manager_user = self.User.objects.create_user(
+            username="manager",
+            email="manager@example.com",
+            password="testpassword",
+            position=self.pm
+        )
+        self.worker_user = self.User.objects.create_user(
+            username="worker",
+            email="worker@example.com",
+            password="testpassword",
+            position=self.position_worker
+        )
+
+    def test_user_is_manager_or_admin_authenticated_admin_user(self):
+        result = user_is_manager_or_admin(self.admin_user)
+        self.assertTrue(result)
+
+    def test_user_is_manager_or_admin_authenticated_manager_user(self):
+        result = user_is_manager_or_admin(self.manager_user)
+        self.assertTrue(result)
+
+    def test_user_is_manager_or_admin_authenticated_worker_user(self):
+        result = user_is_manager_or_admin(self.worker_user)
+        self.assertFalse(result)
+
+    def test_user_is_manager_or_admin_unauthenticated_user(self):
+        try:
+            user_is_manager_or_admin(None)
+        except AttributeError:
+            pass

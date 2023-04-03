@@ -11,7 +11,7 @@ from forge.templatetags.custom_filters import filter_by_completion
 class FilterByCompletionTest(TestCase):
     def setUp(self):
         self.position = Position.objects.create(
-            name="ProjectManager",
+            name="ProjectManager"
         )
 
         self.worker = get_user_model().objects.create_user(
