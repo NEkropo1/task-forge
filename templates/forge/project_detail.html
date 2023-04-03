@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load custom_filters %}
 
 {% block content %}
   <div class="row">
@@ -20,13 +21,24 @@
     </div>
     <div class="col-md-6" style="padding-left: 20px; border-left: 1px solid #ccc;">
       <h2>Tasks:</h2>
+      <h3>Uncompleted:</h3>
       <ul>
-        {% for task in project.tasks.all %}
+        {% for task in project.tasks.all|filter_by_completion:"-" %}
           <li>
               <a href="{% url 'forge:task-detail' task.id %}" class="button">{{ task.title }}</a>
           </li>
         {% empty %}
-          <li>No tasks right now.</li>
+          <li>No uncompleted tasks right now.</li>
+        {% endfor %}
+      </ul>
+      <h3>Completed:</h3>
+      <ul>
+        {% for task in project.tasks.all|filter_by_completion:"+" %}
+          <li>
+              <a href="{% url 'forge:task-detail' task.id %}" class="button">{{ task.title }}</a>
+          </li>
+        {% empty %}
+          <li>No completed tasks right now.</li>
         {% endfor %}
       </ul>
     </div>

@@ -319,6 +319,7 @@ class ProjectCreateView(generic.CreateView):
 class ProjectDetailView(LoginRequiredMixin, generic.DetailView):
     model = Project
     context_object_name = "project"
+    queryset = Project.objects.prefetch_related("tasks__workers")
 
 
 @method_decorator(user_passes_test(user_is_manager_or_admin), name="dispatch")
