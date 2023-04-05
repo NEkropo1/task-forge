@@ -159,6 +159,7 @@ class UserIsManagerOrAdminTest(TestCase):
         result = user_is_manager_or_admin(self.worker_user)
         self.assertFalse(result)
 
+
     def test_user_is_manager_or_admin_unauthenticated_user(self):
         try:
             user_is_manager_or_admin(None)
