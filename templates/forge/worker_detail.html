@@ -2,14 +2,14 @@
 {% load crispy_forms_filters %}
 
 {% block personal %}
-  {% if request.user.position %}
-    {% if worker.position.name == "ProjectManager" or request.user.is_superuser %}
+  {% if worker.position %}
+    {% if request.user.position == "ProjectManager" or request.user.is_superuser %}
        <a href="{% url 'forge:project-create' %}" class="btn btn-primary link-to-page">
           Create Project
        </a>
     {% endif %}
     {% if worker.position.name == "ProjectManager" %}
-      {% if user_data_worker.projects.all %}
+      {% if worker.projects.all %}
         <h2>Projects</h2>
         {% for project in worker.projects.all %}
           <a href="{% url 'forge:project-detail' project.pk %}">
@@ -22,18 +22,18 @@
           Create Team
        </a>
     {% endif %}
-      {% if user_data_worker.teams.all %}
+      {% if worker.teams.all %}
         <h2>Teams</h2>
-        {% for team in user_data_worker.teams.all %}
+        {% for team in worker.teams.all %}
           <a href="{% url 'forge:team-detail' team.pk %}">
             <p>{{ team.name }}</p>
           </a>
         {% endfor %}
       {% endif %}
     {% else %}
-      {% if user_data_worker.teams.all %}
+      {% if worker.teams.all %}
         <h2>Teams</h2>
-        {% for team in user_data_worker.teams.all %}
+        {% for team in worker.teams.all %}
           <a href="{% url 'forge:team-detail' team.pk %}">
             <p>{{ team.name }}</p>
           </a>

@@ -241,11 +241,6 @@ class WorkerDetailView(LoginRequiredMixin, generic.DetailView):
         worker = get_user_model().objects.get(pk=pk)
         return worker
 
-    def get_context_data(self, **kwargs) -> dict[str | Any]:
-        context = super().get_context_data(**kwargs)
-        context["user_data_worker"] = self.get_object()
-        return context
-
 
 @method_decorator(user_passes_test(user_is_manager_or_admin), name="dispatch")
 class WorkerHireView(generic.UpdateView):
