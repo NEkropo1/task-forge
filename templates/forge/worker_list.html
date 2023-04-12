@@ -24,9 +24,11 @@
         <td>{% if worker.team %}<a href="{% url 'forge:team-detail' pk=worker.team.pk %}">{{ worker.team }}</a>{% else %}-{% endif %}</td>
         <td>
           {% if request.user.position.name == "ProjectManager" %}
-            <a href="{% url 'forge:worker-hire' pk=worker.pk %}" class="btn btn-primary">Hire!</a>
-            {% else %}
-            <a href="{% url 'forge:worker-change' pk=worker.pk %}" class="btn btn-primary">Change</a>
+            {% if worker.position %}
+              <a href="{% url 'forge:worker-change' pk=worker.pk %}" class="btn btn-primary">Change</a>
+              {% else %}
+              <a href="{% url 'forge:worker-hire' pk=worker.pk %}" class="btn btn-primary">Hire!</a>
+              {% endif %}
           {% endif %}
         </td>
       </tr>
