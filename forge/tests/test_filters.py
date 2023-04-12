@@ -9,7 +9,7 @@ from forge.templatetags.custom_filters import filter_by_completion
 
 
 class FilterByCompletionTest(TestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         self.position = Position.objects.create(
             name="ProjectManager"
         )
@@ -47,7 +47,7 @@ class FilterByCompletionTest(TestCase):
             tag=self.tag,
         )
 
-    def test_filter_by_completion_plus(self):
+    def test_filter_by_completion_plus(self) -> None:
         qs = Task.objects.all()
         filtered_qs = filter_by_completion(qs, "+")
         self.assertEqual(filtered_qs.count(), 1)

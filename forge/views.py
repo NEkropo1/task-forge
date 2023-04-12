@@ -25,7 +25,6 @@ from forge.forms import (
 from forge.models import Worker, Task, Team, Project
 
 
-# Create your views here.
 def user_is_manager_or_admin(user: Any) -> bool | Any:
     return (user.is_authenticated
             and str(user.position) == "ProjectManager"

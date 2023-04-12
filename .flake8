@@ -1,5 +1,5 @@
 [flake8]
-exclude = .git,__pycache__,.pytest_cache,venv,forge/migrations
+exclude = .git,__pycache__,.pytest_cache,venv,forge/migrations,forge/settings.py
 
 inline-quotes = double
 max-line-length = 89
