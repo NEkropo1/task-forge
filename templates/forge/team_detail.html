@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <h1>{{ team.name }}</h1>
+  <table class="team-table">
+    <thead>
+      <tr>
+        <th>Position</th>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Tasks Done</th>
+        <th>About</th>
+      </tr>
+    </thead>
+<tbody>
+  {% for worker in team.members.all %}
+    <tr>
+      <td>{{ worker.position }}</td>
+      <td><a href="{% url 'forge:worker-detail' worker.pk %}">{{ worker.first_name }} {{ worker.last_name }}</a></td>
+      <td>{{ worker.email }}</td>
+      <td>{{ worker.count_tasks_done }}</td>
+      <td>{{ worker.about }}</td>
+    </tr>
+  {% empty %}
+    <tr>
+      <td colspan="7">No workers in this team.</td>
+    </tr>
+  {% endfor %}
+</tbody>
+
+  </table>
+{% endblock %}

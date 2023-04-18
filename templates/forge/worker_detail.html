@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% load crispy_forms_filters %}
+
+{% block personal %}
+  {% if worker.position %}
+    {% if request.user.position == "ProjectManager" or request.user.is_superuser %}
+       <a href="{% url 'forge:project-create' %}" class="btn btn-primary link-to-page">
+          Create Project
+       </a>
+    {% endif %}
+    {% if worker.position.name == "ProjectManager" %}
+      {% if worker.projects.all %}
+        <h2>Projects</h2>
+        {% for project in worker.projects.all %}
+          <a href="{% url 'forge:project-detail' project.pk %}">
+            <p>{{ project.name }}</p>
+          </a>
+        {% endfor %}
+      {% endif %}
+          {% if worker.position.name == "ProjectManager" or request.user.is_superuser %}
+       <a href="{% url 'forge:team-create' %}" class="btn btn-primary link-to-page">
+          Create Team
+       </a>
+    {% endif %}
+      {% if worker.teams.all %}
+        <h2>Teams</h2>
+        {% for team in worker.teams.all %}
+          <a href="{% url 'forge:team-detail' team.pk %}">
+            <p>{{ team.name }}</p>
+          </a>
+        {% endfor %}
+      {% endif %}
+    {% else %}
+      {% if worker.teams.all %}
+        <h2>Teams</h2>
+        {% for team in worker.teams.all %}
+          <a href="{% url 'forge:team-detail' team.pk %}">
+            <p>{{ team.name }}</p>
+          </a>
+        {% endfor %}
+      {% endif %}
+    {% endif %}
+  {% endif %}
+{% endblock %}

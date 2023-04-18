@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% load crispy_forms_filters %}
+
+{% block content %}
+  {% if tasks %}
+    <table class="team-table">
+      <thead>
+        <tr>
+          <th class="tasks-top-border"><a href="?sort=id&title={{ request.GET.title }}">ID</a></th>
+          <th class="tasks-top-border"><a href="?sort=title&title={{ request.GET.title }}">Title</a></th>
+          <th class="tasks-top-border"><a href="?sort=deadline&title={{ request.GET.title }}">Deadline</a></th>
+          <th class="tasks-top-border"><a href="?sort=priority&title={{ request.GET.title }}">Priority</a></th>
+          <th class="tasks-top-border"><a href="?sort=tag__name&title={{ request.GET.title }}">Task Type</a></th>
+          <th class="tasks-top-border">Workers</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for task in tasks %}
+        <tr class="priority-{{ task.priority }} task-row">
+          <td><a href="{% url 'forge:task-detail' pk=task.pk %}" class="task-link">{{ task.pk }}</a></td>
+          <td><a href="{% url 'forge:task-detail' pk=task.pk %}" class="task-link">{{ task.title }}</a></td>
+          <td><a href="{% url 'forge:task-detail' pk=task.pk %}" class="task-link">{{ task.deadline }}</a></td>
+          <td><a href="{% url 'forge:task-detail' pk=task.pk %}" class="task-link">{{ task.get_priority_display }}</a></td>
+          <td><a href="{% url 'forge:task-detail' pk=task.pk %}" class="task-link">{{ task.tag.name }}</a></td>
+          <td>{{ task.workers.all|length }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <p>There are no tasks for you right now, drink a coffee or add a task :)</p>
+  {% endif %}
+  <div class="d-flex">
+    <div class="mr-auto">
+      <form action="" method="get" class="form-inline">
+        {{ search_form|crispy }}
+        <button class="btn btn-primary" type="submit"><i class="fas fa-search">🔎</i></button>
+      </form>
+    </div>
+
+    {% if request.user.position %}
+      <div class="ml-auto">
+        <a href="{% url 'forge:project-task-create' %}" class="btn btn-primary">
+          Create task
+        </a>
+      </div>
+    {% endif %}
+  </div>
+
+{% endblock %}

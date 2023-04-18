@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <img src="https://dummyimage.com/200x200/000/fff&text=Dummy+Forge+Logo" alt="Forge Logo">
+    {% block title %}<title style="justify-content: center">Task Forge - Welcome</title>{% endblock %}
+    <p>
+        We are excited to have you on board. Our team is working hard to build a powerful and intuitive task management system
+        that will help you stay organized and focused on what matters most.
+    </p>
+    <p>
+        If you are new to Forge, please take a moment to <a href="{% url 'forge:register' %}">register</a> for an account.
+    </p>
+{% endblock %}

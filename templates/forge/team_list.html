@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <div class="team-container">
+    <table class="team-table">
+      <thead>
+        <tr>
+          <th scope="col">Team Name</th>
+          <th scope="col">Project Manager</th>
+          <th scope="col">Number of Members</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for team in teams %}
+          <tr>
+            <td><a href="{% url 'forge:team-detail' team.pk %}">{{ team.name }}</a></td>
+            <td><a href="{% url 'forge:worker-detail' team.project_manager.pk %}">{{ team.project_manager.get_full_name }}</a></td>
+            <td>{{ team.members.count }}</td>
+            {% if request.user.is_superuser or request.user.status.name == "ProjectManager" %}
+              <td><a href="{% url 'forge:team-update' pk=team.pk %}">Edit</a></td>
+            {% endif %}
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% endblock %}
