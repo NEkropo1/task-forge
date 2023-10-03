@@ -53,7 +53,7 @@ python manage.py runserver # starts Django server
 
 ## mac
 ```
-git clone git@github.com:NEkropo1/py-taxi-service-search-and-tests.git
+git clone git@github.com:NEkropo1/task-forge.git
 cd py-taxi-service-search-and-tests
 python3 -m venv venv
 source venv/bin/activate
